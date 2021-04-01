@@ -1,0 +1,27 @@
+name: parkowa_nie
+description: A hammer of invalid parking.
+
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  flutter_email_sender: ^5.0.0
+  geocoder: ^0.2.1
+  exif: ^2.0.0
+  sembast: ^3.0.0+4
+  camera: ^0.8.1
+  provider: ^5.0.0
+  path_provider: ^2.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

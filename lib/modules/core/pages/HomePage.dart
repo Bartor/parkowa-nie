@@ -36,22 +36,24 @@ class _HomePageState extends State<HomePage> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           onPressed: () => _goToPage(1),
-          tooltip: 'Increment',
+          tooltip: 'New report',
           child: Icon(Icons.add),
         ),
         bottomNavigationBar: BottomAppBar(
             shape: CircularNotchedRectangle(),
-            notchMargin: 4.0,
+            notchMargin: 5.0,
             child: new Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 IconButton(
                   icon: Icon(Icons.menu),
+                  tooltip: 'List of reports',
                   onPressed: () => _goToPage(0),
                 ),
                 IconButton(
                   icon: Icon(Icons.settings),
+                  tooltip: 'User settings',
                   onPressed: () => _goToPage(2),
                 ),
               ],

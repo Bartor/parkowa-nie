@@ -42,8 +42,15 @@
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false />
 		<key>NSCameraUsageDescription</key>
-		<string>Can I use the camera please?</string>
+		<string>This app uses a camera</string>
 		<key>NSMicrophoneUsageDescription</key>
-		<string>Can I use the mic please?</string>
+		<string>This app uses a microphone</string>
+		<key>NSPhotoLibraryUsageDescription </key>
+		<string>This app uses the gallery</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>This app needs access to location when open.</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>This app needs access to location when in the background.</string>
+
 	</dict>
 </plist>

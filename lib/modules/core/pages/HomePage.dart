@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:parkowa_nie/modules/core/model/Report.dart';
-import 'package:parkowa_nie/modules/core/services/ReportsService.dart';
+import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/settings/pages/SettingsPage.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
             print('Tapped');
           },
           child:
-              Container(height: 100, padding: EdgeInsets.all(5), child: child),
+              Container(height: 100, padding: EdgeInsets.all(15), child: child),
         ),
       );
 
@@ -76,18 +76,18 @@ class _HomePageState extends State<HomePage> {
               _newReportButton(),
               Divider(),
               Expanded(
-                child: Consumer<ReportsService>(
-                  builder: (context, reportsService, widget) {
-                    if (reportsService == null ||
-                        reportsService.reports == null) {
+                child: Consumer<DatabaseService>(
+                  builder: (context, DatabaseService, widget) {
+                    if (DatabaseService == null ||
+                        DatabaseService.reports == null) {
                       return CircularProgressIndicator();
                     } else {
-                      if (reportsService.reports.isEmpty) {
+                      if (DatabaseService.reports.isEmpty) {
                         return Text('No historic data');
                       } else {
                         return ListView(
                           physics: BouncingScrollPhysics(),
-                          children: reportsService.reports
+                          children: DatabaseService.reports
                               .map((e) => _buildReportCard(report: e))
                               .toList(),
                         );

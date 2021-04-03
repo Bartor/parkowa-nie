@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:parkowa_nie/modules/core/pages/HomePage.dart';
 import 'package:parkowa_nie/modules/core/services/LocationService.dart';
-import 'package:parkowa_nie/modules/core/services/ReportsService.dart';
+import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
-        create: (_) => ReportsService(),
+        create: (_) => DatabaseService(),
       ),
       ChangeNotifierProvider(create: (_) => LocationService())
     ],

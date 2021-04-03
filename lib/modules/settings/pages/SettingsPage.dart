@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:parkowa_nie/modules/core/model/ContactInformation.dart';
+import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -7,10 +10,40 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final _nameController = TextEditingController();
-  final _addressController = TextEditingController();
+  TextEditingController _nameController;
+  TextEditingController _addressController;
 
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    final contact =
+        Provider.of<DatabaseService>(context, listen: false).contact;
+
+    _nameController = TextEditingController(text: contact?.fullName ?? '');
+    _addressController = TextEditingController(text: contact?.address ?? '');
+  }
+
+  String _emptyValidator(String text) {
+    if (text.trim().isEmpty) {
+      return "Cannot be empty";
+    }
+    return null;
+  }
+
+  void _saveForm() async {
+    if (_formKey.currentState.validate()) {
+      await Provider.of<DatabaseService>(context, listen: false)
+          .updateContactInformation(
+              information: ContactInformation(
+                  address: _addressController.text.trim(),
+                  fullName: _nameController.text.trim()));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Info updated')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +59,18 @@ class _SettingsPageState extends State<SettingsPage> {
       body: Container(
         padding: EdgeInsets.all(10),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Text(
+              'Contact information',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline5,
+            ),
+            Text(
+              'This information will be attached to emails sent to city officials',
+              textAlign: TextAlign.justify,
+            ),
+            SizedBox(height: 20),
             Expanded(
                 child: Form(
               key: _formKey,
@@ -34,13 +78,18 @@ class _SettingsPageState extends State<SettingsPage> {
                 physics: BouncingScrollPhysics(),
                 children: [
                   TextFormField(
+                    validator: _emptyValidator,
                     controller: _nameController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
-                            borderSide: BorderSide(width: 5.0)),
+                            borderSide: BorderSide(
+                          width: 5.0,
+                        )),
                         labelText: 'Full name'),
                   ),
+                  SizedBox(height: 20),
                   TextFormField(
+                    validator: _emptyValidator,
                     keyboardType: TextInputType.multiline,
                     maxLines: null,
                     controller: _addressController,
@@ -52,6 +101,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ],
               ),
             )),
+            ElevatedButton(onPressed: _saveForm, child: Text('Save'))
           ],
         ),
       ),

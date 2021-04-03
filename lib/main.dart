@@ -7,10 +7,8 @@ import 'package:provider/provider.dart';
 void main() async {
   runApp(MultiProvider(
     providers: [
-      // This provider loads a database from the filesystem, can't be lazy for smooth ux
-      Provider(
+      ChangeNotifierProvider(
         create: (_) => ReportsService(),
-        lazy: false,
       ),
       ChangeNotifierProvider(create: (_) => LocationService())
     ],
@@ -23,7 +21,12 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'parkowaNIE',
-      theme: ThemeData(primarySwatch: Colors.indigo),
+      theme:
+          ThemeData(primarySwatch: Colors.indigo, brightness: Brightness.light),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+      ),
+      themeMode: ThemeMode.dark,
       home: HomePage(),
     );
   }

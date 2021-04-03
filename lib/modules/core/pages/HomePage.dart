@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:parkowa_nie/modules/history/views/HistoricListView.dart';
-import 'package:parkowa_nie/modules/report/views/ReportSummaryView.dart';
-import 'package:parkowa_nie/modules/settings/views/SettingsView.dart';
+import 'package:intl/intl.dart';
+import 'package:parkowa_nie/modules/core/model/Report.dart';
+import 'package:parkowa_nie/modules/core/services/ReportsService.dart';
+import 'package:parkowa_nie/modules/settings/pages/SettingsPage.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
@@ -11,52 +13,91 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  PageController _controller = PageController(initialPage: 1, keepPage: true);
-
-  Widget _buildPageView() => PageView(
-        physics: BouncingScrollPhysics(),
-        controller: _controller,
-        children: [HistoricListView(), ReportSummaryView(), SettingsView()],
+  Widget _listItem({Widget child}) => Card(
+        child: InkWell(
+          splashColor: Colors.white60,
+          onTap: () {
+            print('Tapped');
+          },
+          child:
+              Container(height: 100, padding: EdgeInsets.all(5), child: child),
+        ),
       );
 
-  void _goToPage(int page) {
-    _controller.animateToPage(page,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOutCubic);
-  }
+  Widget _buildReportCard({Report report}) => _listItem(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("${report.address}, ${report.city}"),
+          Text(DateFormat('y/MM/dd H:m').format(report.dateTime)),
+          Wrap(
+            children: report.offences.map((e) => Text(e)).toList(),
+          )
+        ],
+      ));
 
+  Widget _newReportButton() => _listItem(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Add new report',
+              textAlign: TextAlign.center,
+            ),
+            Icon(Icons.add)
+          ],
+        ),
+      );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text('parkowaNIE'),
+          title: Hero(
+            child: Text('parkowaNIE',
+                style: Theme.of(context).textTheme.headline5),
+            tag: 'bar/title',
+          ),
+          actions: [
+            IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => SettingsPage()));
+                })
+          ],
         ),
-        body: _buildPageView(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => _goToPage(1),
-          tooltip: 'New report',
-          child: Icon(Icons.add),
-        ),
-        bottomNavigationBar: BottomAppBar(
-            shape: CircularNotchedRectangle(),
-            notchMargin: 5.0,
-            child: new Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.menu),
-                  tooltip: 'List of reports',
-                  onPressed: () => _goToPage(0),
+        body: Container(
+          padding: EdgeInsets.all(15),
+          child: Column(
+            children: [
+              _newReportButton(),
+              Divider(),
+              Expanded(
+                child: Consumer<ReportsService>(
+                  builder: (context, reportsService, widget) {
+                    if (reportsService == null ||
+                        reportsService.reports == null) {
+                      return CircularProgressIndicator();
+                    } else {
+                      if (reportsService.reports.isEmpty) {
+                        return Text('No historic data');
+                      } else {
+                        return ListView(
+                          physics: BouncingScrollPhysics(),
+                          children: reportsService.reports
+                              .map((e) => _buildReportCard(report: e))
+                              .toList(),
+                        );
+                      }
+                    }
+                  },
                 ),
-                IconButton(
-                  icon: Icon(Icons.settings),
-                  tooltip: 'User settings',
-                  onPressed: () => _goToPage(2),
-                ),
-              ],
-            )));
+              )
+            ],
+          ),
+        ));
   }
 }

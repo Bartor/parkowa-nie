@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:parkowa_nie/modules/core/model/Report.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
-import 'package:parkowa_nie/modules/settings/pages/SettingsPage.dart';
+import 'package:parkowa_nie/modules/core/widgets/Layout.dart';
+import 'package:parkowa_nie/modules/report/pages/CreateReportPage.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,14 +14,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Widget _listItem({Widget child}) => Card(
+  Widget _listItem({Widget child, Function onTap}) => Card(
         child: InkWell(
           splashColor: Colors.white60,
-          onTap: () {
-            print('Tapped');
-          },
-          child:
-              Container(height: 100, padding: EdgeInsets.all(15), child: child),
+          onTap: onTap,
+          child: Container(padding: EdgeInsets.all(15), child: child),
         ),
       );
 
@@ -38,13 +36,21 @@ class _HomePageState extends State<HomePage> {
       ));
 
   Widget _newReportButton() => _listItem(
+        onTap: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (_) => CreateReportPage()));
+        },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              'Add new report',
-              textAlign: TextAlign.center,
+            Hero(
+              child: Text(
+                'Add new report',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              tag: 'text/addNewReport',
             ),
             Icon(Icons.add)
           ],
@@ -52,52 +58,35 @@ class _HomePageState extends State<HomePage> {
       );
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Hero(
-            child: Text('parkowaNIE',
-                style: Theme.of(context).textTheme.headline5),
-            tag: 'bar/title',
-          ),
-          actions: [
-            IconButton(
-                icon: Icon(Icons.settings),
-                onPressed: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (_) => SettingsPage()));
-                })
-          ],
-        ),
-        body: Container(
-          padding: EdgeInsets.all(15),
-          child: Column(
-            children: [
-              _newReportButton(),
-              Divider(),
-              Expanded(
-                child: Consumer<DatabaseService>(
-                  builder: (context, DatabaseService, widget) {
-                    if (DatabaseService == null ||
-                        DatabaseService.reports == null) {
-                      return CircularProgressIndicator();
-                    } else {
-                      if (DatabaseService.reports.isEmpty) {
-                        return Text('No historic data');
-                      } else {
-                        return ListView(
-                          physics: BouncingScrollPhysics(),
-                          children: DatabaseService.reports
-                              .map((e) => _buildReportCard(report: e))
-                              .toList(),
-                        );
-                      }
-                    }
-                  },
-                ),
-              )
-            ],
-          ),
-        ));
+    return Layout(
+      settings: true,
+      body: Column(
+        children: [
+          _newReportButton(),
+          Divider(),
+          Expanded(
+            child: Consumer<DatabaseService>(
+              builder: (context, databaseService, widget) {
+                if (databaseService == null ||
+                    databaseService.reports == null) {
+                  return CircularProgressIndicator();
+                } else {
+                  if (databaseService.reports.isEmpty) {
+                    return Text('No historic data');
+                  } else {
+                    return ListView(
+                      physics: BouncingScrollPhysics(),
+                      children: databaseService.reports
+                          .map((e) => _buildReportCard(report: e))
+                          .toList(),
+                    );
+                  }
+                }
+              },
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

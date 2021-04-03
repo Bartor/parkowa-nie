@@ -23,8 +23,16 @@ class App extends StatelessWidget {
       title: 'parkowaNIE',
       theme:
           ThemeData(primarySwatch: Colors.indigo, brightness: Brightness.light),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
+      darkTheme:
+          ThemeData(brightness: Brightness.dark, primarySwatch: Colors.indigo)
+              .copyWith(
+        inputDecorationTheme: InputDecorationTheme(
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.indigo.shade200)),
+            labelStyle: TextStyle(color: Colors.indigo.shade200),
+            focusedBorder: OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: Colors.indigo.shade200, width: 2))),
       ),
       themeMode: ThemeMode.dark,
       home: HomePage(),

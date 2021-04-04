@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:parkowa_nie/modules/core/common/format-date.dart';
 import 'package:parkowa_nie/modules/core/model/Report.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/core/widgets/Layout.dart';
 import 'package:parkowa_nie/modules/report/pages/CreateReportPage.dart';
+import 'package:parkowa_nie/modules/report/pages/ReportDetailsPage.dart';
+import 'package:parkowa_nie/modules/settings/pages/SettingsPage.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,16 +24,21 @@ class _HomePageState extends State<HomePage> {
         ),
       );
 
-  Widget _buildReportCard({Report report}) => _listItem(
-          child: Column(
+  Widget _buildReportCard(Report report, int id) => _listItem(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => ReportDetails(
+                  reportId: id,
+                  report: report,
+                )));
+      },
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("${report.address}, ${report.city}"),
-          Text(DateFormat('y/MM/dd H:m').format(report.dateTime)),
-          Wrap(
-            children: report.offences.map((e) => Text(e)).toList(),
-          )
+          Text(formatDate(report.dateTime)),
+          Text(report.licensePlate ?? "No licence plate")
         ],
       ));
 
@@ -59,7 +66,14 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Layout(
-      settings: true,
+      actions: [
+        IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => SettingsPage()));
+            })
+      ],
       body: Column(
         children: [
           _newReportButton(),
@@ -76,8 +90,8 @@ class _HomePageState extends State<HomePage> {
                   } else {
                     return ListView(
                       physics: BouncingScrollPhysics(),
-                      children: databaseService.reports
-                          .map((e) => _buildReportCard(report: e))
+                      children: databaseService.reports.entries
+                          .map((e) => _buildReportCard(e.value, e.key))
                           .toList(),
                     );
                   }

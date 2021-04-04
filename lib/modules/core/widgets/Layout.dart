@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:parkowa_nie/modules/settings/pages/SettingsPage.dart';
 
 class Layout extends StatelessWidget {
-  final bool settings;
+  final List<Widget> actions;
   final Widget body;
-  Layout({Key key, this.settings = false, this.body});
+  Layout({Key key, this.actions = const [], this.body});
 
   @override
   Widget build(BuildContext context) {
@@ -17,16 +16,7 @@ class Layout extends StatelessWidget {
               Text('parkowaNIE', style: Theme.of(context).textTheme.headline5),
           tag: 'bar/title',
         ),
-        actions: settings
-            ? [
-                IconButton(
-                    icon: Icon(Icons.settings),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => SettingsPage()));
-                    })
-              ]
-            : null,
+        actions: actions,
       ),
       body: Container(
         padding: EdgeInsets.all(15),

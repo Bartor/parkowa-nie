@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:parkowa_nie/modules/core/common/empty-validator.dart';
 import 'package:parkowa_nie/modules/core/model/Offence.dart';
+import 'package:parkowa_nie/modules/core/model/Report.dart';
+import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/core/services/LocationService.dart';
 import 'package:parkowa_nie/modules/core/widgets/Layout.dart';
 import 'package:parkowa_nie/modules/report/model/ReportPhoto.dart';
+import 'package:parkowa_nie/modules/report/pages/ReportDetailsPage.dart';
 import 'package:provider/provider.dart';
 
 class CreateReportPage extends StatefulWidget {
@@ -22,7 +25,8 @@ class _CreateReportPageState extends State<CreateReportPage> {
 
   bool _automaticLocation = true;
   final _formKey = GlobalKey<FormState>();
-  final _addressController = TextEditingController();
+  final _cityController = TextEditingController();
+  final _streetController = TextEditingController();
   final _licensePlateController = TextEditingController();
 
   Future<void> _addPhotoDialog() async {
@@ -136,8 +140,10 @@ class _CreateReportPageState extends State<CreateReportPage> {
             if (_automaticLocation &&
                 location != null &&
                 location.fullLocation != null) {
-              _addressController.text =
-                  "${location.fullLocation.placemarks.first.street}, ${location.fullLocation.placemarks.first.locality}";
+              _cityController.text =
+                  location.fullLocation.placemarks.first.locality;
+              _streetController.text =
+                  location.fullLocation.placemarks.first.street;
             }
             return Row(
               children: [
@@ -149,8 +155,22 @@ class _CreateReportPageState extends State<CreateReportPage> {
                       _automaticLocation = false;
                     });
                   },
-                  controller: _addressController,
-                  decoration: InputDecoration(labelText: 'Address'),
+                  controller: _cityController,
+                  decoration: InputDecoration(labelText: 'City'),
+                )),
+                SizedBox(
+                  width: 20,
+                ),
+                Expanded(
+                    child: TextFormField(
+                  validator: emptyValidator,
+                  onTap: () {
+                    setState(() {
+                      _automaticLocation = false;
+                    });
+                  },
+                  controller: _streetController,
+                  decoration: InputDecoration(labelText: 'Street name'),
                 )),
                 SizedBox(
                   width: 10,
@@ -184,19 +204,20 @@ class _CreateReportPageState extends State<CreateReportPage> {
       ));
 
   Widget _buildOffenceList() => ListView(
-      physics: BouncingScrollPhysics(),
-      children: OFFENCES
-          .map((e) => CheckboxListTile(
-                activeColor: Colors.indigo.shade200,
-                value: _offences[e],
-                onChanged: (value) {
-                  setState(() {
-                    _offences[e] = value;
-                  });
-                },
-                title: Text(e),
-              ))
-          .toList());
+        physics: BouncingScrollPhysics(),
+        children: OFFENCES
+            .map((e) => CheckboxListTile(
+                  activeColor: Colors.indigo.shade200,
+                  value: _offences[e],
+                  onChanged: (value) {
+                    setState(() {
+                      _offences[e] = value;
+                    });
+                  },
+                  title: Text(e),
+                ))
+            .toList(),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -225,8 +246,26 @@ class _CreateReportPageState extends State<CreateReportPage> {
           ),
           Expanded(child: _buildOffenceList()),
           ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState.validate()) {}
+              onPressed: () async {
+                if (_formKey.currentState.validate()) {
+                  final report = Report(
+                      licensePlate: _licensePlateController.text.trim(),
+                      address: _streetController.text.trim(),
+                      city: _cityController.text.trim(),
+                      dateTime: DateTime.now(),
+                      offences: _offences.entries
+                          .where((element) => element.value)
+                          .map((e) => e.key)
+                          .toList());
+                  final id =
+                      await Provider.of<DatabaseService>(context, listen: false)
+                          .addReport(report: report);
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (_) => ReportDetails(
+                            reportId: id,
+                            report: report,
+                          )));
+                }
               },
               child: Text('Save'))
         ],

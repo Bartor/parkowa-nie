@@ -1,15 +1,13 @@
+import 'package:hive/hive.dart';
+
+part 'ContactInformation.g.dart';
+
+@HiveType(typeId: 0)
 class ContactInformation {
+  @HiveField(0)
   final String address;
+  @HiveField(1)
   final String fullName;
 
   ContactInformation({this.address, this.fullName});
-
-  Map<String, String> toMap() {
-    return {"address": address, "fullName": fullName};
-  }
-
-  static ContactInformation fromMap(Map<String, Object> data) {
-    return ContactInformation(
-        address: data['address'], fullName: data['fullName']);
-  }
 }

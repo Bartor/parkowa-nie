@@ -18,9 +18,13 @@ class LocationService extends ChangeNotifier {
         permission == LocationPermission.whileInUse) {
       Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.best)
           .listen((newPosition) async {
-        final placemarks = await GeocodingPlatform.instance
-            .placemarkFromCoordinates(
-                newPosition.latitude, newPosition.longitude);
+        List<Placemark> placemarks;
+        try {
+          placemarks = await GeocodingPlatform.instance
+              .placemarkFromCoordinates(
+                  newPosition.latitude, newPosition.longitude);
+        } catch (e) {}
+
         fullLocation =
             FullLocation(placemarks: placemarks, position: newPosition);
         notifyListeners();

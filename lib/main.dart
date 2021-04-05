@@ -7,6 +7,9 @@ import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/core/services/ThemeService.dart';
 import 'package:provider/provider.dart';
 
+import 'package:i18n_extension/i18n_widget.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 import 'modules/core/model/ContactInformation.dart';
 import 'modules/core/model/Report.dart';
 
@@ -35,11 +38,22 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeService = Provider.of<ThemeService>(context);
     return MaterialApp(
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('pl'),
+        const Locale('en'),
+      ],
       title: 'parkowaNIE',
       theme: ThemeService.lightTheme,
       darkTheme: ThemeService.darkTheme,
       themeMode: themeService.themeMode,
-      home: HomePage(),
+      home: I18n(
+        child: HomePage(),
+      ),
     );
   }
 }

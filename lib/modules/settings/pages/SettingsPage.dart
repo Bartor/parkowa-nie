@@ -1,3 +1,4 @@
+import 'package:parkowa_nie/modules/core/common/i18n.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:parkowa_nie/modules/core/common/empty-validator.dart';
@@ -36,7 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   address: _addressController.text.trim(),
                   fullName: _nameController.text.trim()));
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Info updated')));
+          .showSnackBar(SnackBar(content: Text('Info updated'.i18n)));
     }
   }
 
@@ -47,12 +48,13 @@ class _SettingsPageState extends State<SettingsPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Contact information',
+            'Contact information'.i18n,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headline5,
           ),
           Text(
-            'This information will be attached to emails sent to city officials',
+            'This information will be attached to emails sent to city officials to allow them to contact you afterwars. Make sure they are accurate!'
+                .i18n,
             textAlign: TextAlign.justify,
           ),
           SizedBox(height: 20),
@@ -65,7 +67,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 TextFormField(
                   validator: emptyValidator,
                   controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Full name'),
+                  decoration: InputDecoration(labelText: 'Full name'.i18n),
                 ),
                 SizedBox(height: 20),
                 TextFormField(
@@ -73,12 +75,13 @@ class _SettingsPageState extends State<SettingsPage> {
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
                   controller: _addressController,
-                  decoration: InputDecoration(labelText: 'Address information'),
+                  decoration:
+                      InputDecoration(labelText: 'Address information'.i18n),
                 ),
               ],
             ),
           )),
-          ElevatedButton(onPressed: _saveForm, child: Text('Save'))
+          ElevatedButton(onPressed: _saveForm, child: Text('Save'.i18n))
         ],
       ),
     );

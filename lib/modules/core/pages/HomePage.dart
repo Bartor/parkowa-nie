@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parkowa_nie/modules/core/common/format-date.dart';
+import 'package:parkowa_nie/modules/core/common/i18n.dart';
 import 'package:parkowa_nie/modules/core/model/Report.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/core/widgets/Layout.dart';
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           Text("${report.address}, ${report.city}"),
           Text(formatDate(report.dateTime)),
-          Text(report.licensePlate ?? "No licence plate")
+          Text(report.licensePlate ?? "No licence plate".i18n)
         ],
       ));
 
@@ -53,7 +54,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             Hero(
               child: Text(
-                'Add new report',
+                'Add new report'.i18n,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headline6,
               ),
@@ -86,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                   return CircularProgressIndicator();
                 } else {
                   if (databaseService.reports.isEmpty) {
-                    return Text('No historic data');
+                    return Text('No historic data'.i18n);
                   } else {
                     return ListView(
                       physics: BouncingScrollPhysics(),

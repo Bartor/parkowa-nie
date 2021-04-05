@@ -10,6 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  i18n_extension: ^3.0.0
   cupertino_icons: ^1.0.2
   flutter_email_sender: ^5.0.0
   geolocator: ^7.0.1

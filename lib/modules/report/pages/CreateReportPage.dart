@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:parkowa_nie/modules/core/common/i18n.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -34,7 +35,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
     final result = await showDialog<ReportPhoto>(
         context: context,
         builder: (_) =>
-            SimpleDialog(title: Text('Select photo source'), children: [
+            SimpleDialog(title: Text('Select photo source'.i18n), children: [
               SimpleDialogOption(
                 child: Row(
                   children: [
@@ -42,7 +43,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                     SizedBox(
                       width: 10,
                     ),
-                    Text('Camera')
+                    Text('Camera'.i18n)
                   ],
                 ),
                 onPressed: () async {
@@ -63,7 +64,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                     SizedBox(
                       width: 10,
                     ),
-                    Text('Gallery')
+                    Text('Gallery'.i18n)
                   ],
                 ),
                 onPressed: () async {
@@ -91,7 +92,10 @@ class _CreateReportPageState extends State<CreateReportPage> {
         onPressed: _addPhotoDialog,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text('Add a photo'), Icon(Icons.add)],
+          children: [
+            Text('Add a photo'.i18n, textAlign: TextAlign.center),
+            Icon(Icons.add)
+          ],
         ));
   }
 
@@ -156,7 +160,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                     });
                   },
                   controller: _cityController,
-                  decoration: InputDecoration(labelText: 'City'),
+                  decoration: InputDecoration(labelText: 'City'.i18n),
                 )),
                 SizedBox(
                   width: 20,
@@ -170,7 +174,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                     });
                   },
                   controller: _streetController,
-                  decoration: InputDecoration(labelText: 'Street name'),
+                  decoration: InputDecoration(labelText: 'Street name'.i18n),
                 )),
                 SizedBox(
                   width: 10,
@@ -198,7 +202,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
           TextFormField(
             validator: emptyValidator,
             controller: _licensePlateController,
-            decoration: InputDecoration(labelText: 'License plate'),
+            decoration: InputDecoration(labelText: 'License plate'.i18n),
           ),
         ],
       ));
@@ -214,7 +218,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                       _offences[e] = value;
                     });
                   },
-                  title: Text(e),
+                  title: Text(e.i18n),
                 ))
             .toList(),
       );
@@ -227,7 +231,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
         children: [
           Hero(
             child: Text(
-              'Add new report',
+              'Add new report'.i18n,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headline6,
             ),
@@ -267,7 +271,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                           )));
                 }
               },
-              child: Text('Save'))
+              child: Text('Save'.i18n))
         ],
       ),
     );

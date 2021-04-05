@@ -1,3 +1,4 @@
+import 'package:parkowa_nie/modules/core/common/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:parkowa_nie/modules/core/common/format-date.dart';
@@ -30,13 +31,13 @@ class ReportDetails extends StatelessWidget {
             Expanded(
               child: Column(
                 children: [
-                  Text("Parking report"),
+                  Text("Parking report".i18n),
                   Text(report.city),
                   Text(report.address),
-                  Text(report.licensePlate ?? "No licence plate"),
+                  Text(report.licensePlate ?? "No licence plate".i18n),
                   Text(formatDate(report.dateTime)),
                   Wrap(
-                    children: report.offences.map((e) => Text(e)).toList(),
+                    children: report.offences.map((e) => Text(e.i18n)).toList(),
                   )
                 ],
               ),
@@ -54,12 +55,11 @@ class ReportDetails extends StatelessWidget {
                   try {
                     await FlutterEmailSender.send(email);
                   } catch (e) {
-                    print(e.message);
                     ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(e.message ?? "Unknown error")));
+                        SnackBar(content: Text("There was an error".i18n)));
                   }
                 },
-                child: Text('Send'))
+                child: Text('Send'.i18n))
           ],
         ),
       ),

@@ -17,6 +17,7 @@ extension Localization on String {
       {"en": "Street name", "pl": "Ulica"} +
       {"en": "License plate", "pl": "Tablica rejestracyjna"} +
       {"en": "Save", "pl": "Zapisz"} +
+      {"en": "Edit", "pl": "Edytuj"} +
       {"en": "Parking report", "pl": "Zgłoszenie nieprawidłowego parkowania"} +
       {"en": "There was an error", "pl": "Wystąpił błąd"} +
       {"en": "Send", "pl": "Wyślij"} +
@@ -29,7 +30,10 @@ extension Localization on String {
             "Te dane będą dołączane do wiadomości do Straży Miejskiej, aby umożliwić im kontakt w sprawie zgłoszeń. Upewnij się, że są poprawne!"
       } +
       {"en": "Full name", "pl": "Imię i nazwisko"} +
-      {"en": "Address information", "pl": "Adres"};
+      {"en": "Address information", "pl": "Adres"} +
+      {"en": "Licence plate", "pl": "Tablica rejestracyjna"} +
+      {"en": "Date & time", "pl": "Data i godzina"} +
+      {"en": "Address", "pl": "Adres"};
 
   static var _offenceTranslations = Translations.from('en', {
     OffenceType.NO_ENOUGH_SIDEWALK_SPACE: {

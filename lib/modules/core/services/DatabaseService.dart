@@ -44,6 +44,11 @@ class DatabaseService extends ChangeNotifier {
     return await _reportsBox.add(report);
   }
 
+  Future<void> updateReport({Report report, int id}) async {
+    await _init();
+    await _reportsBox.put(id, report);
+  }
+
   Future<void> deleteReport({int reportId}) async {
     await _init();
     await _reportsBox.delete(reportId);

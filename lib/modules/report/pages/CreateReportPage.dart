@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:parkowa_nie/modules/core/common/format-date.dart';
 import 'package:parkowa_nie/modules/core/common/i18n.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +11,16 @@ import 'package:parkowa_nie/modules/core/model/Report.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/core/services/LocationService.dart';
 import 'package:parkowa_nie/modules/core/widgets/Layout.dart';
+import 'package:parkowa_nie/modules/core/widgets/ImageButton.dart';
 import 'package:parkowa_nie/modules/report/model/ReportPhoto.dart';
 import 'package:parkowa_nie/modules/report/pages/ReportDetailsPage.dart';
 import 'package:provider/provider.dart';
 
 class CreateReportPage extends StatefulWidget {
+  final Report report;
+  final int reportId;
+  CreateReportPage({this.report, this.reportId});
+
   @override
   _CreateReportPageState createState() => _CreateReportPageState();
 }
@@ -23,12 +29,39 @@ class _CreateReportPageState extends State<CreateReportPage> {
   List<ReportPhoto> _photos = [];
 
   Map<String, bool> _offences = {for (var offence in OFFENCES) offence: false};
+  DateTime _dateTime = DateTime.now();
 
   bool _automaticLocation = true;
   final _formKey = GlobalKey<FormState>();
   final _cityController = TextEditingController();
   final _streetController = TextEditingController();
   final _licensePlateController = TextEditingController();
+  final _dateTimeController =
+      TextEditingController(text: formatDate(DateTime.now()));
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.report != null) {
+      _automaticLocation = false;
+      _cityController.text = widget.report.city;
+      _streetController.text = widget.report.address;
+      _licensePlateController.text = widget.report.licensePlate;
+      _cityController.text = widget.report.city;
+      _dateTimeController.text = formatDate(widget.report.dateTime);
+
+      for (var offence in widget.report.offences) {
+        _offences[offence] = true;
+      }
+
+      _dateTime = widget.report.dateTime;
+
+      _photos = widget.report.photoUris
+          .map((e) => ReportPhoto(source: ImageSource.gallery, file: File(e)))
+          .toList();
+    }
+  }
 
   Future<void> _addPhotoDialog() async {
     final picker = ImagePicker();
@@ -100,27 +133,16 @@ class _CreateReportPageState extends State<CreateReportPage> {
   }
 
   Widget _imageButton(ReportPhoto photo) {
-    return Material(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-      clipBehavior: Clip.hardEdge,
-      color: Colors.transparent,
-      child: Ink.image(
-        image: FileImage(
-          photo.file,
-        ),
-        fit: BoxFit.cover,
-        child: InkWell(
-          splashColor: Colors.white60,
-          onTap: () {
-            print('Photo preview');
-          },
-          onLongPress: () {
-            setState(() {
-              _photos.remove(photo);
-            });
-          },
-        ),
-      ),
+    return ImageButton(
+      photoFile: photo.file,
+      onTap: () {
+        print('Photo preview');
+      },
+      onLongPress: () {
+        setState(() {
+          _photos.remove(photo);
+        });
+      },
     );
   }
 
@@ -135,6 +157,25 @@ class _CreateReportPageState extends State<CreateReportPage> {
           _addNewPhotoButton()
         ],
       );
+
+  Future<void> _getDateTime() async {
+    final dateTime = await showDatePicker(
+        context: context,
+        initialDate: _dateTime,
+        firstDate: DateTime.now().subtract(Duration(days: 365 * 5)),
+        lastDate: DateTime.now());
+    if (dateTime != null) {
+      final time = await showTimePicker(
+          context: context, initialTime: TimeOfDay.fromDateTime(_dateTime));
+      if (time != null) {
+        setState(() {
+          _dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day,
+              time.hour, time.minute);
+          _dateTimeController.text = formatDate(_dateTime);
+        });
+      }
+    }
+  }
 
   Widget _buildForm() => Form(
       key: _formKey,
@@ -199,11 +240,27 @@ class _CreateReportPageState extends State<CreateReportPage> {
           SizedBox(
             height: 20,
           ),
-          TextFormField(
-            validator: emptyValidator,
-            controller: _licensePlateController,
-            decoration: InputDecoration(labelText: 'License plate'.i18n),
-          ),
+          Row(children: [
+            Expanded(
+                child: TextFormField(
+              validator: emptyValidator,
+              controller: _licensePlateController,
+              decoration: InputDecoration(labelText: 'License plate'.i18n),
+            )),
+            SizedBox(
+              width: 20,
+            ),
+            Expanded(
+                child: TextFormField(
+              readOnly: true,
+              validator: emptyValidator,
+              controller: _dateTimeController,
+              decoration: InputDecoration(labelText: 'Date & time'.i18n),
+              onTap: () {
+                _getDateTime();
+              },
+            )),
+          ]),
         ],
       ));
 
@@ -260,15 +317,25 @@ class _CreateReportPageState extends State<CreateReportPage> {
                       offences: _offences.entries
                           .where((element) => element.value)
                           .map((e) => e.key)
-                          .toList());
-                  final id =
-                      await Provider.of<DatabaseService>(context, listen: false)
-                          .addReport(report: report);
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (_) => ReportDetails(
-                            reportId: id,
-                            report: report,
-                          )));
+                          .toList(),
+                      photoUris: _photos.map((e) => e.file.path).toList());
+
+                  if (widget.report == null) {
+                    // We are creating a report
+                    final id = await Provider.of<DatabaseService>(context,
+                            listen: false)
+                        .addReport(report: report);
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (_) => ReportDetails(
+                              reportId: id,
+                              report: report,
+                            )));
+                  } else {
+                    // We are updating a report
+                    await Provider.of<DatabaseService>(context, listen: false)
+                        .updateReport(report: report, id: widget.reportId);
+                    Navigator.of(context).pop(report);
+                  }
                 }
               },
               child: Text('Save'.i18n))

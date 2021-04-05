@@ -22,13 +22,14 @@ class ReportAdapter extends TypeAdapter<Report> {
       dateTime: fields[2] as DateTime,
       offences: (fields[3] as List)?.cast<String>(),
       licensePlate: fields[4] as String,
+      photoUris: (fields[5] as List)?.cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Report obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.address)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class ReportAdapter extends TypeAdapter<Report> {
       ..writeByte(3)
       ..write(obj.offences)
       ..writeByte(4)
-      ..write(obj.licensePlate);
+      ..write(obj.licensePlate)
+      ..writeByte(5)
+      ..write(obj.photoUris);
   }
 
   @override

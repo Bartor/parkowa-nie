@@ -14,11 +14,14 @@ class Report {
   final List<String> offences;
   @HiveField(4)
   final String licensePlate;
+  @HiveField(5)
+  final List<String> photoUris;
 
   Report(
       {this.address,
       this.city,
       this.dateTime,
       this.offences = const [],
-      this.licensePlate});
+      this.licensePlate,
+      this.photoUris = const []});
 }

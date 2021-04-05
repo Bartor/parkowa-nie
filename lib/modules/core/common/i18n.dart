@@ -1,7 +1,7 @@
 import 'package:i18n_extension/i18n_extension.dart';
 import 'package:parkowa_nie/modules/core/model/Offence.dart';
 
-extension Localization on String {
+class I18n {
   static var _uiTranslations = Translations("en") +
       {
         "en": "No licence plate",
@@ -58,7 +58,9 @@ extension Localization on String {
     }
   });
 
-  static var _t = _uiTranslations * _offenceTranslations;
+  static var translations = _uiTranslations * _offenceTranslations;
+}
 
-  String get i18n => localize(this, _t);
+extension Localization on String {
+  String get i18n => localize(this, I18n.translations);
 }

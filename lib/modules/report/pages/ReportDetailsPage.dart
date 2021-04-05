@@ -1,13 +1,15 @@
 import 'dart:io';
 
+import 'package:flutter_mailer/flutter_mailer.dart';
 import 'package:parkowa_nie/modules/core/common/i18n.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:parkowa_nie/modules/core/common/format-date.dart';
 import 'package:parkowa_nie/modules/core/model/Report.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/core/widgets/Layout.dart';
 import 'package:parkowa_nie/modules/core/widgets/ImageButton.dart';
+import 'package:parkowa_nie/modules/core/data/build-message-body.dart';
+import 'package:parkowa_nie/modules/core/data/city-email-addresses.dart';
 import 'package:parkowa_nie/modules/report/pages/CreateReportPage.dart';
 import 'package:provider/provider.dart';
 
@@ -105,16 +107,30 @@ class _ReportDetailsState extends State<ReportDetails> {
                 Expanded(
                     child: ElevatedButton(
                         onPressed: () async {
-                          final Email email = Email(
-                            body: "Test body",
-                            subject: 'Email subject',
-                            recipients: ['example@example.com'],
-                            attachmentPaths: [],
+                          final contactInfo = Provider.of<DatabaseService>(
+                                  context,
+                                  listen: false)
+                              .contact;
+
+                          final receipent = getCityEmail(city: _report.city);
+                          if (receipent == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content:
+                                    Text('This city has no email defined')));
+                            return;
+                          }
+
+                          final MailOptions email = MailOptions(
+                            body: buildMessageBody(
+                                report: _report, contactInfo: contactInfo),
+                            subject: 'Zgłoszenie nieprawidłowego parkowania',
+                            recipients: [receipent],
+                            attachments: _report.photoUris,
                             isHTML: false,
                           );
 
                           try {
-                            await FlutterEmailSender.send(email);
+                            await FlutterMailer.send(email);
                           } catch (e) {
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 content: Text("There was an error".i18n)));

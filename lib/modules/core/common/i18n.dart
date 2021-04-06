@@ -33,28 +33,38 @@ class I18n {
       {"en": "Address information", "pl": "Adres"} +
       {"en": "Licence plate", "pl": "Tablica rejestracyjna"} +
       {"en": "Date & time", "pl": "Data i godzina"} +
+      {"en": "Do you want to cancel?", "pl": "Czy chcesz przerwać?"} +
+      {"en": "Yes", "pl": "Tak"} +
+      {"en": "No", "pl": "Nie"} +
+      {"en": "No offences", "pl": "Brak wykroczeń"} +
+      {"en": "No photos", "pl": "Brak zdjęć"} +
+      {"en": "Cannot be empty", "pl": "Należy wypełnić"} +
       {"en": "Address", "pl": "Adres"};
 
   static var _offenceTranslations = Translations.from('en', {
-    OffenceType.NO_ENOUGH_SIDEWALK_SPACE: {
+    OffenceType.NO_ENOUGH_SIDEWALK_SPACE.toString(): {
       "en": "Less than 1.5 m of available space on sidewalk",
       "pl": "Nie pozostawiono 1.5 metra wolnego miejsca na chodniku"
     },
-    OffenceType.NO_PARKING_ZONE: {
+    OffenceType.NO_PARKING_ZONE.toString(): {
       "en": "Parking in restricted area",
       "pl": "Parkowanie na zakazie parkowania"
     },
-    OffenceType.NO_STOPPING_SING: {
+    OffenceType.NO_STOPPING_SING.toString(): {
       "en": "Parking after no stopping sign",
       "pl": "Parkowanie na zakazie zatrzymywania się"
     },
-    OffenceType.TOO_CLOSE_TO_CROSSING: {
+    OffenceType.TOO_CLOSE_TO_CROSSING.toString(): {
       "en": "Parking less than 10 meters from pedestrian crossing",
       "pl": "Parkowanie poniżej 10 metrów od przejścia dla pieszych"
     },
-    OffenceType.TOO_CLOSE_TO_INTERSECTION: {
+    OffenceType.TOO_CLOSE_TO_INTERSECTION.toString(): {
       "en": "Parking less than 10 meters from crossing",
       "pl": "Parkowanie poniżej 10 metrów od skrzyżowania"
+    },
+    OffenceType.PARKED_ON_GREEN_AREA.toString(): {
+      "en": "Parking on green area",
+      "pl": "Parkowanie na terenie zielonym"
     }
   });
 

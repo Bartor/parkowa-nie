@@ -17,8 +17,10 @@ String buildMessageBody({Report report, ContactInformation contactInfo}) {
     }
   }
 
-  buffer.write(
-      "\nDane zgłąszającego:\n${contactInfo.fullName}\n${contactInfo.address}");
+  if (contactInfo != null) {
+    buffer.write(
+        "\nDane zgłąszającego:\n${contactInfo.fullName}\n${contactInfo.address}");
+  }
 
   return buffer.toString();
 }

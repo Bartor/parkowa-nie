@@ -28,7 +28,7 @@ class CreateReportPage extends StatefulWidget {
 class _CreateReportPageState extends State<CreateReportPage> {
   List<ReportPhoto> _photos = [];
 
-  Map<String, bool> _offences = {for (var offence in OFFENCES) offence: false};
+  Map<String, bool> _offences = {for (var offence in offences) offence: false};
   DateTime _dateTime = DateTime.now();
 
   bool _automaticLocation = true;
@@ -120,6 +120,87 @@ class _CreateReportPageState extends State<CreateReportPage> {
     }
   }
 
+  Future<void> _getDateTime() async {
+    final dateTime = await showDatePicker(
+        context: context,
+        initialDate: _dateTime,
+        firstDate: DateTime.now().subtract(Duration(days: 365 * 5)),
+        lastDate: DateTime.now());
+    if (dateTime != null) {
+      final time = await showTimePicker(
+          context: context, initialTime: TimeOfDay.fromDateTime(_dateTime));
+      if (time != null) {
+        setState(() {
+          _dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day,
+              time.hour, time.minute);
+          _dateTimeController.text = formatDate(_dateTime);
+        });
+      }
+    }
+  }
+
+  Future<void> _saveReport() async {
+    if (_formKey.currentState.validate()) {
+      final report = Report(
+          licensePlate: _licensePlateController.text.trim(),
+          address: _streetController.text.trim(),
+          city: _cityController.text.trim(),
+          dateTime: DateTime.now(),
+          offences: _offences.entries
+              .where((element) => element.value)
+              .map((e) => e.key)
+              .toList(),
+          photoUris: _photos.map((e) => e.file.path).toList());
+
+      if (widget.report == null) {
+        // We are creating a report
+        final id = await Provider.of<DatabaseService>(context, listen: false)
+            .addReport(report: report);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (_) => ReportDetails(
+                  reportId: id,
+                  report: report,
+                )));
+      } else {
+        // We are updating a report
+        await Provider.of<DatabaseService>(context, listen: false)
+            .updateReport(report: report, id: widget.reportId);
+        Navigator.of(context).pop(report);
+      }
+    }
+  }
+
+  Future<bool> _onWillPop() async {
+    final doCancel = await showDialog(
+        context: context,
+        builder: (_) =>
+            SimpleDialog(title: Text("Do you want to cancel?".i18n), children: [
+              SimpleDialogOption(
+                child: Text("Yes".i18n),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              ),
+              SimpleDialogOption(
+                child: Text("No".i18n),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              )
+            ]));
+
+    if (doCancel) {
+      _photos.forEach((photo) {
+        // Delete photos taken in-app
+        if (photo.source == ImageSource.camera) {
+          photo.file.delete();
+        }
+      });
+    }
+
+    return doCancel ?? false;
+  }
+
   Widget _addNewPhotoButton() {
     return ElevatedButton(
         onPressed: _addPhotoDialog,
@@ -158,25 +239,6 @@ class _CreateReportPageState extends State<CreateReportPage> {
         ],
       );
 
-  Future<void> _getDateTime() async {
-    final dateTime = await showDatePicker(
-        context: context,
-        initialDate: _dateTime,
-        firstDate: DateTime.now().subtract(Duration(days: 365 * 5)),
-        lastDate: DateTime.now());
-    if (dateTime != null) {
-      final time = await showTimePicker(
-          context: context, initialTime: TimeOfDay.fromDateTime(_dateTime));
-      if (time != null) {
-        setState(() {
-          _dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day,
-              time.hour, time.minute);
-          _dateTimeController.text = formatDate(_dateTime);
-        });
-      }
-    }
-  }
-
   Widget _buildForm() => Form(
       key: _formKey,
       child: Column(
@@ -191,6 +253,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                   location.fullLocation.placemarks.first.street;
             }
             return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                     child: TextFormField(
@@ -240,7 +303,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
           SizedBox(
             height: 20,
           ),
-          Row(children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(
                 child: TextFormField(
               validator: emptyValidator,
@@ -266,7 +329,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
 
   Widget _buildOffenceList() => ListView(
         physics: BouncingScrollPhysics(),
-        children: OFFENCES
+        children: offences
             .map((e) => CheckboxListTile(
                   activeColor: Colors.indigo.shade200,
                   value: _offences[e],
@@ -283,63 +346,34 @@ class _CreateReportPageState extends State<CreateReportPage> {
   @override
   Widget build(BuildContext context) {
     return Layout(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Hero(
-            child: Text(
-              'Add new report'.i18n,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headline6,
+      body: WillPopScope(
+        onWillPop: _onWillPop,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Hero(
+              child: Text(
+                'Add new report'.i18n,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              tag: 'text/addNewReport',
             ),
-            tag: 'text/addNewReport',
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          _buildImages(),
-          SizedBox(
-            height: 20,
-          ),
-          _buildForm(),
-          SizedBox(
-            height: 20,
-          ),
-          Expanded(child: _buildOffenceList()),
-          ElevatedButton(
-              onPressed: () async {
-                if (_formKey.currentState.validate()) {
-                  final report = Report(
-                      licensePlate: _licensePlateController.text.trim(),
-                      address: _streetController.text.trim(),
-                      city: _cityController.text.trim(),
-                      dateTime: DateTime.now(),
-                      offences: _offences.entries
-                          .where((element) => element.value)
-                          .map((e) => e.key)
-                          .toList(),
-                      photoUris: _photos.map((e) => e.file.path).toList());
-
-                  if (widget.report == null) {
-                    // We are creating a report
-                    final id = await Provider.of<DatabaseService>(context,
-                            listen: false)
-                        .addReport(report: report);
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (_) => ReportDetails(
-                              reportId: id,
-                              report: report,
-                            )));
-                  } else {
-                    // We are updating a report
-                    await Provider.of<DatabaseService>(context, listen: false)
-                        .updateReport(report: report, id: widget.reportId);
-                    Navigator.of(context).pop(report);
-                  }
-                }
-              },
-              child: Text('Save'.i18n))
-        ],
+            SizedBox(
+              height: 20,
+            ),
+            _buildImages(),
+            SizedBox(
+              height: 20,
+            ),
+            _buildForm(),
+            SizedBox(
+              height: 20,
+            ),
+            Expanded(child: _buildOffenceList()),
+            ElevatedButton(onPressed: _saveReport, child: Text('Save'.i18n))
+          ],
+        ),
       ),
     );
   }

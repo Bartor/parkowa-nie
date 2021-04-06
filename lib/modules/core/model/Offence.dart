@@ -1,15 +1,21 @@
-class OffenceType {
-  static const NO_PARKING_ZONE = 'NO_PARKING_ZONE';
-  static const NO_ENOUGH_SIDEWALK_SPACE = 'NO_ENOUGH_SIDEWALK_SPACE';
-  static const TOO_CLOSE_TO_CROSSING = 'TOO_CLOSE_TO_CROSSING';
-  static const TOO_CLOSE_TO_INTERSECTION = 'TOO_CLOSE_TO_INTERSECTION';
-  static const NO_STOPPING_SING = 'NO_STOPPING_SIGN';
+import 'package:hive/hive.dart';
+
+part 'Offence.g.dart';
+
+@HiveType(typeId: 2)
+enum OffenceType {
+  @HiveField(0)
+  NO_PARKING_ZONE,
+  @HiveField(1)
+  NO_ENOUGH_SIDEWALK_SPACE,
+  @HiveField(2)
+  TOO_CLOSE_TO_CROSSING,
+  @HiveField(3)
+  TOO_CLOSE_TO_INTERSECTION,
+  @HiveField(4)
+  NO_STOPPING_SING,
+  @HiveField(5)
+  PARKED_ON_GREEN_AREA,
 }
 
-const OFFENCES = [
-  OffenceType.NO_PARKING_ZONE,
-  OffenceType.NO_ENOUGH_SIDEWALK_SPACE,
-  OffenceType.TOO_CLOSE_TO_CROSSING,
-  OffenceType.TOO_CLOSE_TO_INTERSECTION,
-  OffenceType.NO_STOPPING_SING,
-];
+final offences = OffenceType.values.map((e) => e.toString()).toList();

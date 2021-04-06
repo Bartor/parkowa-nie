@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:parkowa_nie/modules/core/model/Offence.dart';
 import 'package:parkowa_nie/modules/core/pages/HomePage.dart';
 import 'package:parkowa_nie/modules/core/services/LocationService.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
@@ -18,6 +19,7 @@ void main() async {
 
   Hive.registerAdapter(ContactInformationAdapter());
   Hive.registerAdapter(ReportAdapter());
+  Hive.registerAdapter(OffenceTypeAdapter());
 
   runApp(MultiProvider(
     providers: [

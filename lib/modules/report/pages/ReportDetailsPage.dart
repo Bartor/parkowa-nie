@@ -11,10 +11,11 @@ import 'package:parkowa_nie/modules/core/widgets/ImageButton.dart';
 import 'package:parkowa_nie/modules/core/data/build-message-body.dart';
 import 'package:parkowa_nie/modules/core/data/city-email-addresses.dart';
 import 'package:parkowa_nie/modules/report/pages/CreateReportPage.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 class ReportDetails extends StatefulWidget {
-  Report report;
+  final Report report;
   final int reportId;
   ReportDetails({this.report, this.reportId});
 
@@ -23,28 +24,72 @@ class ReportDetails extends StatefulWidget {
 }
 
 class _ReportDetailsState extends State<ReportDetails> {
-  Report _report;
   int _reportId;
+  Report _report;
+  List<Widget> _photos;
 
   @override
   void initState() {
     super.initState();
 
     _report = widget.report;
+    _photos = widget.report.photoUris
+        .map((path) => ImageButton(
+              photoFile: File(path),
+            ))
+        .toList();
     _reportId = widget.reportId;
+  }
+
+  Future<void> _sendEmail() async {
+    final contactInfo =
+        Provider.of<DatabaseService>(context, listen: false).contact;
+
+    final receipent = getCityEmail(city: _report.city);
+    if (receipent == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('This city has no email defined')));
+      return;
+    }
+
+    final MailOptions email = MailOptions(
+      body: buildMessageBody(report: _report, contactInfo: contactInfo),
+      subject: 'Zgłoszenie nieprawidłowego parkowania',
+      recipients: [receipent],
+      attachments: _report.photoUris,
+      isHTML: false,
+    );
+
+    try {
+      await FlutterMailer.send(email);
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("There was an error".i18n)));
+    }
+  }
+
+  Future<void> _deleteReport() async {
+    await Provider.of<DatabaseService>(context, listen: false)
+        .deleteReport(reportId: _reportId);
+    Navigator.of(context).pop();
+    final dirs = [
+      await getApplicationSupportDirectory(),
+      ...await getExternalStorageDirectories()
+    ];
+
+    _report.photoUris.forEach((path) {
+      print(path);
+      if (dirs.any((dir) => path.contains(dir.path))) {
+        File(path).delete();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Layout(
       actions: [
-        IconButton(
-            icon: Icon(Icons.delete_rounded),
-            onPressed: () async {
-              await Provider.of<DatabaseService>(context, listen: false)
-                  .deleteReport(reportId: _reportId);
-              Navigator.of(context).pop();
-            })
+        IconButton(icon: Icon(Icons.delete_rounded), onPressed: _deleteReport)
       ],
       body: Center(
         child: Column(
@@ -82,23 +127,24 @@ class _ReportDetailsState extends State<ReportDetails> {
                         text: _report.licensePlate ?? "No licence plate".i18n)
                   ])),
                   Divider(),
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children:
-                          _report.offences.map((e) => Text(e.i18n)).toList()),
+                  _report.offences.isEmpty
+                      ? Text("No offences".i18n)
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: _report.offences
+                              .map((e) => Text(e.i18n))
+                              .toList()),
                   Divider(),
-                  GridView.count(
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
-                    physics: BouncingScrollPhysics(),
-                    shrinkWrap: true,
-                    crossAxisCount: 3,
-                    children: _report.photoUris
-                        .map((uri) => ImageButton(
-                              photoFile: File(uri),
-                            ))
-                        .toList(),
-                  )
+                  _photos.isEmpty
+                      ? Text("No photos".i18n)
+                      : GridView.count(
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                          physics: BouncingScrollPhysics(),
+                          shrinkWrap: true,
+                          crossAxisCount: 3,
+                          children: _photos,
+                        )
                 ],
               ),
             ),
@@ -106,37 +152,7 @@ class _ReportDetailsState extends State<ReportDetails> {
               children: [
                 Expanded(
                     child: ElevatedButton(
-                        onPressed: () async {
-                          final contactInfo = Provider.of<DatabaseService>(
-                                  context,
-                                  listen: false)
-                              .contact;
-
-                          final receipent = getCityEmail(city: _report.city);
-                          if (receipent == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content:
-                                    Text('This city has no email defined')));
-                            return;
-                          }
-
-                          final MailOptions email = MailOptions(
-                            body: buildMessageBody(
-                                report: _report, contactInfo: contactInfo),
-                            subject: 'Zgłoszenie nieprawidłowego parkowania',
-                            recipients: [receipent],
-                            attachments: _report.photoUris,
-                            isHTML: false,
-                          );
-
-                          try {
-                            await FlutterMailer.send(email);
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text("There was an error".i18n)));
-                          }
-                        },
-                        child: Text('Send'.i18n))),
+                        onPressed: _sendEmail, child: Text('Send'.i18n))),
                 SizedBox(
                   width: 10,
                 ),

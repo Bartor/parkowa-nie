@@ -168,6 +168,11 @@ class _ReportDetailsState extends State<ReportDetails> {
                           if (result != null) {
                             setState(() {
                               _report = result;
+                              _photos = result.photoUris
+                                  .map((path) => ImageButton(
+                                        photoFile: File(path),
+                                      ))
+                                  .toList();
                             });
                           }
                         },

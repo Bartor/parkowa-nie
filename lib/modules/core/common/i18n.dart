@@ -38,6 +38,10 @@ class I18n {
       {"en": "No", "pl": "Nie"} +
       {"en": "No offences", "pl": "Brak wykroczeń"} +
       {"en": "No photos", "pl": "Brak zdjęć"} +
+      {
+        "en": "Couldn't get current location",
+        "pl": "Nie udało się zlokalizować"
+      } +
       {"en": "Cannot be empty", "pl": "Należy wypełnić"} +
       {"en": "Address", "pl": "Adres"};
 

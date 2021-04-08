@@ -26,7 +26,7 @@ void main() async {
       ChangeNotifierProvider(
         create: (_) => DatabaseService(),
       ),
-      ChangeNotifierProvider(create: (_) => LocationService()),
+      Provider(create: (_) => LocationService()),
       ChangeNotifierProvider(
         create: (_) => ThemeService(),
       )

@@ -1,38 +1,29 @@
-import 'package:flutter/cupertino.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:parkowa_nie/modules/core/model/Location.dart';
 
-class LocationService extends ChangeNotifier {
-  LocationPermission permission;
-  FullLocation fullLocation;
-
-  Future<void> initialize() async {
+class LocationService {
+  Future<LocationPermission> _checkPermission() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    permission = await Geolocator.checkPermission();
+    var permission = await Geolocator.checkPermission();
     if (serviceEnabled == false || permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
     }
-    notifyListeners();
-    if (permission == LocationPermission.always ||
-        permission == LocationPermission.whileInUse) {
-      Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.best)
-          .listen((newPosition) async {
-        List<Placemark> placemarks;
-        try {
-          placemarks = await GeocodingPlatform.instance
-              .placemarkFromCoordinates(
-                  newPosition.latitude, newPosition.longitude);
-        } catch (e) {}
-
-        fullLocation =
-            FullLocation(placemarks: placemarks, position: newPosition);
-        notifyListeners();
-      });
-    }
+    return permission;
   }
 
-  LocationService() {
-    initialize();
+  Future<FullLocation> locate() async {
+    final permission = await _checkPermission();
+    if (permission == LocationPermission.always ||
+        permission == LocationPermission.whileInUse) {
+      final position = await Geolocator.getCurrentPosition();
+      List<Placemark> placemarks;
+      try {
+        placemarks = await GeocodingPlatform.instance
+            .placemarkFromCoordinates(position.latitude, position.longitude);
+      } catch (e) {}
+
+      return FullLocation(placemarks: placemarks, position: position);
+    }
   }
 }

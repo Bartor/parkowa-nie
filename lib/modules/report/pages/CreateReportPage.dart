@@ -31,7 +31,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
   Map<String, bool> _offences = {for (var offence in offences) offence: false};
   DateTime _dateTime = DateTime.now();
 
-  bool _automaticLocation = true;
+  bool _locating = false;
   final _formKey = GlobalKey<FormState>();
   final _cityController = TextEditingController();
   final _streetController = TextEditingController();
@@ -44,7 +44,6 @@ class _CreateReportPageState extends State<CreateReportPage> {
     super.initState();
 
     if (widget.report != null) {
-      _automaticLocation = false;
       _cityController.text = widget.report.city;
       _streetController.text = widget.report.address;
       _licensePlateController.text = widget.report.licensePlate;
@@ -115,7 +114,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
 
     if (result != null) {
       setState(() {
-        _photos.add(result);
+        _photos.insert(0, result);
       });
     }
   }
@@ -137,6 +136,28 @@ class _CreateReportPageState extends State<CreateReportPage> {
         });
       }
     }
+  }
+
+  Future<void> _locate() async {
+    setState(() {
+      _locating = true;
+    });
+    final location =
+        await Provider.of<LocationService>(context, listen: false).locate();
+    final placemark = location.placemarks.first;
+    if (placemark != null) {
+      setState(() {
+        _streetController.text =
+            "${placemark.thoroughfare} ${placemark.subThoroughfare}";
+        _cityController.text = placemark.locality ?? "";
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Couldn't get current location".i18n)));
+    }
+    setState(() {
+      _locating = false;
+    });
   }
 
   Future<void> _saveReport() async {
@@ -189,7 +210,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
               )
             ]));
 
-    if (doCancel) {
+    if (doCancel ?? false) {
       _photos.forEach((photo) {
         // Delete photos taken in-app
         if (photo.source == ImageSource.camera) {
@@ -202,104 +223,99 @@ class _CreateReportPageState extends State<CreateReportPage> {
   }
 
   Widget _addNewPhotoButton() {
-    return ElevatedButton(
-        onPressed: _addPhotoDialog,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Add a photo'.i18n, textAlign: TextAlign.center),
-            Icon(Icons.add)
-          ],
-        ));
-  }
-
-  Widget _imageButton(ReportPhoto photo) {
-    return ImageButton(
-      photoFile: photo.file,
-      onTap: () {
-        print('Photo preview');
-      },
-      onLongPress: () {
-        setState(() {
-          _photos.remove(photo);
-        });
-      },
+    return Container(
+      height: 100,
+      width: 100,
+      margin: EdgeInsets.only(right: 10),
+      child: ElevatedButton(
+          onPressed: _addPhotoDialog,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Add a photo'.i18n, textAlign: TextAlign.center),
+              Icon(Icons.add)
+            ],
+          )),
     );
   }
 
-  Widget _buildImages() => GridView.count(
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
-        physics: BouncingScrollPhysics(),
-        shrinkWrap: true,
-        crossAxisCount: 3,
-        children: [
-          ..._photos.map((photo) => _imageButton(photo)),
-          _addNewPhotoButton()
-        ],
+  Widget _imageButton(ReportPhoto photo) {
+    return Container(
+        height: 100,
+        width: 100,
+        margin: EdgeInsets.only(right: 10),
+        child: ImageButton(
+          photoFile: photo.file,
+          onTap: () {
+            print('Photo preview');
+          },
+          onLongPress: () {
+            setState(() {
+              _photos.remove(photo);
+            });
+          },
+        ));
+  }
+
+  Widget _buildImages() => SizedBox(
+        height: 100,
+        child: ListView(
+          physics: BouncingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          children: [
+            _addNewPhotoButton(),
+            ..._photos.map((photo) => _imageButton(photo)),
+          ],
+        ),
       );
 
   Widget _buildForm() => Form(
       key: _formKey,
       child: Column(
         children: [
-          Consumer<LocationService>(builder: (context, location, widget) {
-            if (_automaticLocation &&
-                location != null &&
-                location.fullLocation != null) {
-              _cityController.text =
-                  location.fullLocation.placemarks.first.locality;
-              _streetController.text =
-                  location.fullLocation.placemarks.first.street;
-            }
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                    child: TextFormField(
-                  validator: emptyValidator,
-                  onTap: () {
-                    setState(() {
-                      _automaticLocation = false;
-                    });
-                  },
-                  controller: _cityController,
-                  decoration: InputDecoration(labelText: 'City'.i18n),
-                )),
-                SizedBox(
-                  width: 20,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                  child: TextFormField(
+                validator: emptyValidator,
+                controller: _cityController,
+                decoration: InputDecoration(labelText: 'City'.i18n),
+              )),
+              SizedBox(
+                width: 20,
+              ),
+              Expanded(
+                  child: TextFormField(
+                validator: emptyValidator,
+                controller: _streetController,
+                decoration: InputDecoration(labelText: 'Street name'.i18n),
+              )),
+              SizedBox(
+                width: 10,
+              ),
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Center(
+                  child: _locating
+                      ? CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.indigo.shade200),
+                        )
+                      : IconButton(
+                          onPressed: () {
+                            FocusScope.of(context)
+                                .requestFocus(new FocusNode());
+                            _locate();
+                          },
+                          iconSize: 24,
+                          color: Colors.indigo.shade200,
+                          icon: Icon(Icons.location_on_rounded)),
                 ),
-                Expanded(
-                    child: TextFormField(
-                  validator: emptyValidator,
-                  onTap: () {
-                    setState(() {
-                      _automaticLocation = false;
-                    });
-                  },
-                  controller: _streetController,
-                  decoration: InputDecoration(labelText: 'Street name'.i18n),
-                )),
-                SizedBox(
-                  width: 10,
-                ),
-                IconButton(
-                    onPressed: () {
-                      FocusScope.of(context).requestFocus(new FocusNode());
-                      setState(() {
-                        _automaticLocation = true;
-                      });
-                    },
-                    iconSize: 24,
-                    color: Colors.indigo.shade200,
-                    icon: Icon(
-                      _automaticLocation
-                          ? Icons.location_on_rounded
-                          : Icons.location_off_rounded,
-                    ))
-              ],
-            );
-          }),
+              )
+            ],
+          ),
           SizedBox(
             height: 20,
           ),

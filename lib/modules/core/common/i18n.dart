@@ -37,6 +37,8 @@ class I18n {
       {"en": "Yes", "pl": "Tak"} +
       {"en": "No", "pl": "Nie"} +
       {"en": "No offences", "pl": "Brak wykroczeń"} +
+      {"en": "Unknown city", "pl": "Nieznane miasto"} +
+      {"en": "We don't have this city's email address in the database. Do you want to put it in manually?", "pl": "Nie posiadamy adresu mailowego dla tego miasta. Chcesz kontynuować i podać go ręcznie?"} +
       {"en": "No photos", "pl": "Brak zdjęć"} +
       {
         "en": "Couldn't get current location",

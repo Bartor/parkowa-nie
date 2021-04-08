@@ -47,9 +47,27 @@ class _ReportDetailsState extends State<ReportDetails> {
 
     final receipent = getCityEmail(city: _report.city);
     if (receipent == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('This city has no email defined')));
-      return;
+      final doContinue = await showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+                title: Text("Unknown city".i18n),
+                content: Text(
+                    "We don't have this city's email address in the database. Do you want to put it in manually?"
+                        .i18n),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: Text("No".i18n)),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                      child: Text("Yes".i18n)),
+                ],
+              ));
+      if (!(doContinue ?? false)) return;
     }
 
     final MailOptions email = MailOptions(

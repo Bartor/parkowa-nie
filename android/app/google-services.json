@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "612987282016",
+    "project_id": "parkowa-nie",
+    "storage_bucket": "parkowa-nie.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:612987282016:android:c2611b1d5483a123921905",
+        "android_client_info": {
+          "package_name": "net.bartor.parkowa_nie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "612987282016-nk7ncg5t9drba4blup61pheqe9550mv3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.bartor.parkowa_nie",
+            "certificate_hash": "85b569e935a39a5f79bafd25fadc89437ba3a923"
+          }
+        },
+        {
+          "client_id": "612987282016-6pfr69bafqvqn507or25ri528f560foo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBY3xlQPvDn0sfaeNdDnKOMvqeSxt5xhWY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "612987282016-6pfr69bafqvqn507or25ri528f560foo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

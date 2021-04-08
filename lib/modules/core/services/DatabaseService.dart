@@ -29,7 +29,6 @@ class DatabaseService extends ChangeNotifier {
 
       _reportsBox.listenable().addListener(() async {
         reports = _reportsBox.toMap();
-        print('New report');
         notifyListeners();
       });
 

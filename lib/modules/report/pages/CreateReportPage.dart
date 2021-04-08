@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:parkowa_nie/modules/core/common/empty-validator.dart';
 import 'package:parkowa_nie/modules/core/model/Offence.dart';
 import 'package:parkowa_nie/modules/core/model/Report.dart';
+import 'package:parkowa_nie/modules/core/services/AnalyticsService.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/core/services/LocationService.dart';
 import 'package:parkowa_nie/modules/core/widgets/Layout.dart';
@@ -172,6 +173,11 @@ class _CreateReportPageState extends State<CreateReportPage> {
               .map((e) => e.key)
               .toList(),
           photoUris: _photos.map((e) => e.file.path).toList());
+
+      Provider.of<AnalyticsService>(context, listen: false)
+          .createReport(report: report)
+          .then((value) => print("Analytics sent"))
+          .onError((error, stackTrace) => print(error));
 
       if (widget.report == null) {
         // We are creating a report

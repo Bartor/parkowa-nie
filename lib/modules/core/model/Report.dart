@@ -24,4 +24,10 @@ class Report {
       this.offences = const [],
       this.licensePlate,
       this.photoUris = const []});
+
+  Map<String, dynamic> toMap() => {
+        "city": city,
+        "offences_number": offences.length,
+        "license_plate": licensePlate
+      };
 }

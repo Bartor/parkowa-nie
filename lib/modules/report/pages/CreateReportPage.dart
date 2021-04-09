@@ -13,6 +13,7 @@ import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/core/services/LocationService.dart';
 import 'package:parkowa_nie/modules/core/widgets/Layout.dart';
 import 'package:parkowa_nie/modules/core/widgets/ImageButton.dart';
+import 'package:parkowa_nie/modules/core/widgets/YesNoDialog.dart';
 import 'package:parkowa_nie/modules/report/model/ReportPhoto.dart';
 import 'package:parkowa_nie/modules/report/pages/ReportDetailsPage.dart';
 import 'package:provider/provider.dart';
@@ -176,7 +177,6 @@ class _CreateReportPageState extends State<CreateReportPage> {
 
       Provider.of<AnalyticsService>(context, listen: false)
           .createReport(report: report)
-          .then((value) => print("Analytics sent"))
           .onError((error, stackTrace) => print(error));
 
       if (widget.report == null) {
@@ -201,20 +201,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
     final doCancel = await showDialog(
         context: context,
         builder: (_) =>
-            SimpleDialog(title: Text("Do you want to cancel?".i18n), children: [
-              SimpleDialogOption(
-                child: Text("Yes".i18n),
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-              ),
-              SimpleDialogOption(
-                child: Text("No".i18n),
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-              )
-            ]));
+            YesNoDialog(title: Text("Do you want to cancel?".i18n)));
 
     if (doCancel ?? false) {
       _photos.forEach((photo) {

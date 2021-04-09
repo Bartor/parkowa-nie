@@ -16,6 +16,8 @@ class Report {
   final String licensePlate;
   @HiveField(5)
   final List<String> photoUris;
+  @HiveField(6)
+  bool sent;
 
   Report(
       {this.address,
@@ -23,7 +25,8 @@ class Report {
       this.dateTime,
       this.offences = const [],
       this.licensePlate,
-      this.photoUris = const []});
+      this.photoUris = const [],
+      this.sent = false});
 
   Map<String, dynamic> toMap() => {
         "city": city,

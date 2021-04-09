@@ -33,13 +33,29 @@ class _HomePageState extends State<HomePage> {
                   report: report,
                 )));
       },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("${report.address}, ${report.city}"),
-          Text(formatDate(report.dateTime)),
-          Text(report.licensePlate ?? "No licence plate".i18n)
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RichText(
+                text: TextSpan(
+                    text: report.city,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                    children: [
+                      TextSpan(text: " - "),
+                      TextSpan(
+                          text: report.address,
+                          style: TextStyle(fontWeight: FontWeight.normal))
+                    ]),
+              ),
+              Text(formatDate(report.dateTime)),
+              Text(report.licensePlate ?? "No licence plate".i18n)
+            ],
+          ),
+          report.sent ?? false ? Icon(Icons.check) : Icon(Icons.save)
         ],
       ));
 
@@ -64,6 +80,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       );
+
   @override
   Widget build(BuildContext context) {
     return Layout(

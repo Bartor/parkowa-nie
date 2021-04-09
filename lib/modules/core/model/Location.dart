@@ -5,5 +5,5 @@ class FullLocation {
   final Position position;
   final List<Placemark> placemarks;
 
-  FullLocation({this.position, this.placemarks}) {}
+  FullLocation({this.position, this.placemarks});
 }

@@ -13,8 +13,6 @@ class OffenceTypeAdapter extends TypeAdapter<OffenceType> {
   @override
   OffenceType read(BinaryReader reader) {
     switch (reader.readByte()) {
-      case 0:
-        return OffenceType.NO_PARKING_ZONE;
       case 1:
         return OffenceType.NO_ENOUGH_SIDEWALK_SPACE;
       case 2:
@@ -25,17 +23,24 @@ class OffenceTypeAdapter extends TypeAdapter<OffenceType> {
         return OffenceType.NO_STOPPING_SING;
       case 5:
         return OffenceType.PARKED_ON_GREEN_AREA;
+      case 6:
+        return OffenceType.TOO_CLOSE_TO_BUS_TRAM_STOP;
+      case 7:
+        return OffenceType.OBSTRUCTING_LEGALLY_PARKED_VEHICLE;
+      case 8:
+        return OffenceType.TOO_HEAVY;
+      case 9:
+        return OffenceType.AWAY_FROM_THE_EDGE_OF_THE_ROAD;
+      case 10:
+        return OffenceType.RESIDENCE_ZONE;
       default:
-        return OffenceType.NO_PARKING_ZONE;
+        return OffenceType.NO_ENOUGH_SIDEWALK_SPACE;
     }
   }
 
   @override
   void write(BinaryWriter writer, OffenceType obj) {
     switch (obj) {
-      case OffenceType.NO_PARKING_ZONE:
-        writer.writeByte(0);
-        break;
       case OffenceType.NO_ENOUGH_SIDEWALK_SPACE:
         writer.writeByte(1);
         break;
@@ -50,6 +55,21 @@ class OffenceTypeAdapter extends TypeAdapter<OffenceType> {
         break;
       case OffenceType.PARKED_ON_GREEN_AREA:
         writer.writeByte(5);
+        break;
+      case OffenceType.TOO_CLOSE_TO_BUS_TRAM_STOP:
+        writer.writeByte(6);
+        break;
+      case OffenceType.OBSTRUCTING_LEGALLY_PARKED_VEHICLE:
+        writer.writeByte(7);
+        break;
+      case OffenceType.TOO_HEAVY:
+        writer.writeByte(8);
+        break;
+      case OffenceType.AWAY_FROM_THE_EDGE_OF_THE_ROAD:
+        writer.writeByte(9);
+        break;
+      case OffenceType.RESIDENCE_ZONE:
+        writer.writeByte(10);
         break;
     }
   }

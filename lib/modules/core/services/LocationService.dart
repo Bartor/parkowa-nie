@@ -24,6 +24,8 @@ class LocationService {
       } catch (e) {}
 
       return FullLocation(placemarks: placemarks, position: position);
+    } else {
+      return null;
     }
   }
 }

@@ -4,13 +4,16 @@ import 'package:flutter_mailer/flutter_mailer.dart';
 import 'package:parkowa_nie/modules/core/common/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:parkowa_nie/modules/core/common/format-date.dart';
+import 'package:parkowa_nie/modules/core/model/ContactInformation.dart';
 import 'package:parkowa_nie/modules/core/model/Report.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/core/widgets/Layout.dart';
 import 'package:parkowa_nie/modules/core/widgets/ImageButton.dart';
 import 'package:parkowa_nie/modules/core/data/build-message-body.dart';
 import 'package:parkowa_nie/modules/core/data/city-email-addresses.dart';
+import 'package:parkowa_nie/modules/core/widgets/YesNoDialog.dart';
 import 'package:parkowa_nie/modules/report/pages/CreateReportPage.dart';
+import 'package:parkowa_nie/modules/settings/pages/SettingsPage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -42,30 +45,36 @@ class _ReportDetailsState extends State<ReportDetails> {
   }
 
   Future<void> _sendEmail() async {
-    final contactInfo =
+    ContactInformation contactInfo =
         Provider.of<DatabaseService>(context, listen: false).contact;
+
+    if (contactInfo == null ||
+        (contactInfo.address ?? "").isEmpty ||
+        (contactInfo.fullName ?? "").isEmpty) {
+      final updateInfo = await showDialog(
+          context: context,
+          builder: (_) => YesNoDialog(
+                title: Text("Missing info".i18n),
+                content: Text(
+                    "You haven't set your contact information. Do you want to set it now?".i18n),
+              ));
+      if (updateInfo ?? false) {
+        await Navigator.of(context)
+            .push(MaterialPageRoute(builder: (_) => SettingsPage()));
+        contactInfo =
+            Provider.of<DatabaseService>(context, listen: false).contact;
+      }
+    }
 
     final receipent = getCityEmail(city: _report.city);
     if (receipent == null) {
       final doContinue = await showDialog(
           context: context,
-          builder: (_) => AlertDialog(
+          builder: (_) => YesNoDialog(
                 title: Text("Unknown city".i18n),
                 content: Text(
                     "We don't have this city's email address in the database. Do you want to put it in manually?"
                         .i18n),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(false);
-                      },
-                      child: Text("No".i18n)),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(true);
-                      },
-                      child: Text("Yes".i18n)),
-                ],
               ));
       if (!(doContinue ?? false)) return;
     }
@@ -79,7 +88,18 @@ class _ReportDetailsState extends State<ReportDetails> {
     );
 
     try {
-      await FlutterMailer.send(email);
+      final result = await FlutterMailer.send(email);
+      switch (result) {
+        case MailerResponse.saved:
+        case MailerResponse.sent:
+        case MailerResponse.android:
+          _report.sent = true;
+          await Provider.of<DatabaseService>(context, listen: false)
+              .updateReport(report: _report, id: _reportId);
+          break;
+        default:
+          break;
+      }
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("There was an error".i18n)));
@@ -96,7 +116,6 @@ class _ReportDetailsState extends State<ReportDetails> {
     ];
 
     _report.photoUris.forEach((path) {
-      print(path);
       if (dirs.any((dir) => path.contains(dir.path))) {
         File(path).delete();
       }

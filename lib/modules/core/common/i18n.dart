@@ -38,8 +38,15 @@ class I18n {
       {"en": "No", "pl": "Nie"} +
       {"en": "No offences", "pl": "Brak wykroczeń"} +
       {"en": "Unknown city", "pl": "Nieznane miasto"} +
-      {"en": "We don't have this city's email address in the database. Do you want to put it in manually?", "pl": "Nie posiadamy adresu mailowego dla tego miasta. Chcesz kontynuować i podać go ręcznie?"} +
+      {
+        "en":
+            "We don't have this city's email address in the database. Do you want to put it in manually?",
+        "pl":
+            "Nie posiadamy adresu mailowego dla tego miasta. Chcesz kontynuować i podać go ręcznie?"
+      } +
       {"en": "No photos", "pl": "Brak zdjęć"} +
+      {"en": "Missing info", "pl": "Brakujące informacje"} +
+      {"en": "You haven't set your contact information. Do you want to set it now?", "pl": "Nie uzupełniono informacji kontaktowych. Czy chcesz zrobić to teraz?"} +
       {
         "en": "Couldn't get current location",
         "pl": "Nie udało się zlokalizować"
@@ -52,25 +59,43 @@ class I18n {
       "en": "Less than 1.5 m of available space on sidewalk",
       "pl": "Nie pozostawiono 1.5 metra wolnego miejsca na chodniku"
     },
-    OffenceType.NO_PARKING_ZONE.toString(): {
-      "en": "Parking in restricted area",
-      "pl": "Parkowanie na zakazie parkowania"
-    },
     OffenceType.NO_STOPPING_SING.toString(): {
       "en": "Parking after no stopping sign",
-      "pl": "Parkowanie na zakazie zatrzymywania się"
+      "pl": "Postój na zakazie zatrzymywania się"
     },
     OffenceType.TOO_CLOSE_TO_CROSSING.toString(): {
       "en": "Parking less than 10 meters from pedestrian crossing",
-      "pl": "Parkowanie poniżej 10 metrów od przejścia dla pieszych"
+      "pl": "Postój poniżej 10 metrów od przejścia dla pieszych"
     },
     OffenceType.TOO_CLOSE_TO_INTERSECTION.toString(): {
       "en": "Parking less than 10 meters from crossing",
-      "pl": "Parkowanie poniżej 10 metrów od skrzyżowania"
+      "pl": "Postój poniżej 10 metrów od skrzyżowania"
     },
     OffenceType.PARKED_ON_GREEN_AREA.toString(): {
       "en": "Parking on green area",
-      "pl": "Parkowanie na terenie zielonym"
+      "pl": "Postój na terenie zielonym"
+    },
+    OffenceType.AWAY_FROM_THE_EDGE_OF_THE_ROAD.toString(): {
+      "en": "Parking on sidewalk away from the edge of the road",
+      "pl": "Postój na chodniku z dala od krawędzi jezdni"
+    },
+    OffenceType.OBSTRUCTING_LEGALLY_PARKED_VEHICLE.toString(): {
+      "en": "Parked vehicle obstructs access to legally parked one",
+      "pl": "Pojazd utrudnia dostęp do legalnie zaparkowanego pojazdu"
+    },
+    OffenceType.TOO_CLOSE_TO_BUS_TRAM_STOP.toString(): {
+      "en": "Parking less than 15 meters from public transport stop",
+      "pl": "Postój poniżej 15 metrów od przystanku"
+    },
+    OffenceType.TOO_HEAVY.toString(): {
+      "en":
+          "Vehilce with permissible gross weight greater than 2.5 t parked on sidewalk",
+      "pl":
+          "Pojazd o dopuszczalnej masie całkowitej powyżej 2.5 t stoi na chodniku"
+    },
+    OffenceType.RESIDENCE_ZONE.toString(): {
+      "en": "Parking outside of designated parking place in a residence zone",
+      "pl": "Postój poza wyznaczonym miejsce w strefie zamieszakania"
     }
   });
 

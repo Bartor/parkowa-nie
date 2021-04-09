@@ -1,7 +1,7 @@
+import 'package:parkowa_nie/modules/core/common/empty-validator.dart';
 import 'package:parkowa_nie/modules/core/common/i18n.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:parkowa_nie/modules/core/common/empty-validator.dart';
 import 'package:parkowa_nie/modules/core/model/ContactInformation.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/core/widgets/Layout.dart';
@@ -65,6 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
               physics: BouncingScrollPhysics(),
               children: [
                 TextFormField(
+                  keyboardType: TextInputType.name,
                   validator: emptyValidator,
                   controller: _nameController,
                   decoration: InputDecoration(labelText: 'Full name'.i18n),

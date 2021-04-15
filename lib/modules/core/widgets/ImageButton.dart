@@ -12,21 +12,22 @@ class ImageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-      clipBehavior: Clip.hardEdge,
-      color: Colors.transparent,
-      child: Ink.image(
-        image: FileImage(
-          photoFile,
-        ),
-        fit: BoxFit.cover,
-        child: InkWell(
-          splashColor: Colors.white60,
-          onTap: onTap,
-          onLongPress: onLongPress,
-        ),
-      ),
-    );
+    return Hero(
+        tag: "image/${photoFile.path}",
+        child: Material(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          clipBehavior: Clip.hardEdge,
+          color: Colors.transparent,
+          child: Ink.image(
+            image: FileImage(
+              photoFile,
+            ),
+            fit: BoxFit.cover,
+            child: InkWell(
+              splashColor: Colors.white60,
+              onTap: onTap,
+            ),
+          ),
+        ));
   }
 }

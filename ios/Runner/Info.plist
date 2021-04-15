@@ -47,6 +47,8 @@
 		<string>This app uses a microphone</string>
 		<key>NSPhotoLibraryUsageDescription </key>
 		<string>This app uses the gallery</string>
+		<key>NSPhotoLibraryAddUsageDescription </key>
+		<string>This app uses the gallery</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>This app needs access to location when open.</string>
 		<key>NSLocationAlwaysUsageDescription</key>

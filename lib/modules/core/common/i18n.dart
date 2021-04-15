@@ -46,12 +46,20 @@ class I18n {
       } +
       {"en": "No photos", "pl": "Brak zdjęć"} +
       {"en": "Missing info", "pl": "Brakujące informacje"} +
-      {"en": "You haven't set your contact information. Do you want to set it now?", "pl": "Nie uzupełniono informacji kontaktowych. Czy chcesz zrobić to teraz?"} +
+      {
+        "en":
+            "You haven't set your contact information. Do you want to set it now?",
+        "pl":
+            "Nie uzupełniono informacji kontaktowych. Czy chcesz zrobić to teraz?"
+      } +
       {
         "en": "Couldn't get current location",
         "pl": "Nie udało się zlokalizować"
       } +
       {"en": "Cannot be empty", "pl": "Należy wypełnić"} +
+      {"en": "Could not take an image", "pl": "Nie udało się zrobić zdjęcia"} +
+      {"en": "Could not pick an image", "pl": "Nie udało się wybrać zdjęcia"} +
+      {"en": "Image saved to gallery", "pl": "Zdjęcie zapisane w galerii"} +
       {"en": "Address", "pl": "Adres"};
 
   static var _offenceTranslations = Translations.from('en', {

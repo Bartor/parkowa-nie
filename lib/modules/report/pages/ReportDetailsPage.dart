@@ -4,6 +4,7 @@ import 'package:flutter_mailer/flutter_mailer.dart';
 import 'package:parkowa_nie/modules/core/common/i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:parkowa_nie/modules/core/common/format-date.dart';
+import 'package:parkowa_nie/modules/core/common/show-image-preview.dart';
 import 'package:parkowa_nie/modules/core/model/ContactInformation.dart';
 import 'package:parkowa_nie/modules/core/model/Report.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
@@ -36,12 +37,21 @@ class _ReportDetailsState extends State<ReportDetails> {
     super.initState();
 
     _report = widget.report;
-    _photos = widget.report.photoUris
-        .map((path) => ImageButton(
-              photoFile: File(path),
+    _photos = _buildPhotos(widget.report);
+    _reportId = widget.reportId;
+  }
+
+  List<Widget> _buildPhotos(Report report) {
+    return report.photoUris
+        .asMap()
+        .entries
+        .map((entry) => ImageButton(
+              onTap: () {
+                _previewPhoto(entry.key);
+              },
+              photoFile: File(entry.value),
             ))
         .toList();
-    _reportId = widget.reportId;
   }
 
   Future<void> _sendEmail() async {
@@ -56,7 +66,8 @@ class _ReportDetailsState extends State<ReportDetails> {
           builder: (_) => YesNoDialog(
                 title: Text("Missing info".i18n),
                 content: Text(
-                    "You haven't set your contact information. Do you want to set it now?".i18n),
+                    "You haven't set your contact information. Do you want to set it now?"
+                        .i18n),
               ));
       if (updateInfo ?? false) {
         await Navigator.of(context)
@@ -120,6 +131,11 @@ class _ReportDetailsState extends State<ReportDetails> {
         File(path).delete();
       }
     });
+  }
+
+  Future<void> _previewPhoto(int index) async {
+    Navigator.of(context)
+        .push(showImagePreview(widget.report.photoUris, index));
   }
 
   @override
@@ -205,11 +221,7 @@ class _ReportDetailsState extends State<ReportDetails> {
                           if (result != null) {
                             setState(() {
                               _report = result;
-                              _photos = result.photoUris
-                                  .map((path) => ImageButton(
-                                        photoFile: File(path),
-                                      ))
-                                  .toList();
+                              _photos = _buildPhotos(result);
                             });
                           }
                         },

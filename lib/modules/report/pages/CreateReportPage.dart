@@ -6,11 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:parkowa_nie/modules/core/common/empty-validator.dart';
+import 'package:parkowa_nie/modules/core/common/show-image-preview.dart';
 import 'package:parkowa_nie/modules/core/model/Offence.dart';
 import 'package:parkowa_nie/modules/core/model/Report.dart';
 import 'package:parkowa_nie/modules/core/services/AnalyticsService.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/core/services/LocationService.dart';
+import 'package:parkowa_nie/modules/core/widgets/ImagePreview.dart';
 import 'package:parkowa_nie/modules/core/widgets/Layout.dart';
 import 'package:parkowa_nie/modules/core/widgets/ImageButton.dart';
 import 'package:parkowa_nie/modules/core/widgets/YesNoDialog.dart';
@@ -81,13 +83,19 @@ class _CreateReportPageState extends State<CreateReportPage> {
                   ],
                 ),
                 onPressed: () async {
-                  final image =
-                      await picker.getImage(source: ImageSource.camera);
-                  if (image == null) {
-                    Navigator.of(context).pop(null);
-                  } else {
-                    Navigator.of(context).pop(ReportPhoto(
-                        file: File(image.path), source: ImageSource.camera));
+                  try {
+                    final image =
+                        await picker.getImage(source: ImageSource.camera);
+
+                    if (image == null) {
+                      Navigator.of(context).pop(null);
+                    } else {
+                      Navigator.of(context).pop(ReportPhoto(
+                          file: File(image.path), source: ImageSource.camera));
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Could not take an image".i18n)));
                   }
                 },
               ),
@@ -102,13 +110,18 @@ class _CreateReportPageState extends State<CreateReportPage> {
                   ],
                 ),
                 onPressed: () async {
-                  final image =
-                      await picker.getImage(source: ImageSource.gallery);
-                  if (image == null) {
-                    Navigator.of(context).pop(null);
-                  } else {
-                    Navigator.of(context).pop(ReportPhoto(
-                        file: File(image.path), source: ImageSource.gallery));
+                  try {
+                    final image =
+                        await picker.getImage(source: ImageSource.gallery);
+                    if (image == null) {
+                      Navigator.of(context).pop(null);
+                    } else {
+                      Navigator.of(context).pop(ReportPhoto(
+                          file: File(image.path), source: ImageSource.gallery));
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Could not pick an image".i18n)));
                   }
                 },
               )
@@ -232,20 +245,27 @@ class _CreateReportPageState extends State<CreateReportPage> {
     );
   }
 
-  Widget _imageButton(ReportPhoto photo) {
+  Widget _imageButton(ReportPhoto photo, int index) {
     return Container(
         height: 100,
         width: 100,
         margin: EdgeInsets.only(right: 10),
         child: ImageButton(
           photoFile: photo.file,
-          onTap: () {
-            print('Photo preview');
-          },
-          onLongPress: () {
-            setState(() {
-              _photos.remove(photo);
-            });
+          onTap: () async {
+            final result = await Navigator.of(context).push(showImagePreview(
+                _photos.map((e) => e.file.path).toList(), index,
+                deletable: true));
+            switch (result) {
+              case ImagePreviewState.delete:
+                setState(() {
+                  _photos.remove(photo);
+
+                  if (photo.source == ImageSource.camera) {
+                    photo.file.delete();
+                  }
+                });
+            }
           },
         ));
   }
@@ -257,7 +277,10 @@ class _CreateReportPageState extends State<CreateReportPage> {
           scrollDirection: Axis.horizontal,
           children: [
             _addNewPhotoButton(),
-            ..._photos.map((photo) => _imageButton(photo)),
+            ..._photos
+                .asMap()
+                .entries
+                .map((entry) => _imageButton(entry.value, entry.key)),
           ],
         ),
       );

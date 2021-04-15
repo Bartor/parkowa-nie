@@ -16,14 +16,16 @@ enum OffenceType {
   PARKED_ON_GREEN_AREA,
   @HiveField(6)
   TOO_CLOSE_TO_BUS_TRAM_STOP,
-  @HiveField(7)
-  OBSTRUCTING_LEGALLY_PARKED_VEHICLE,
   @HiveField(8)
   TOO_HEAVY,
   @HiveField(9)
   AWAY_FROM_THE_EDGE_OF_THE_ROAD,
   @HiveField(10)
-  RESIDENCE_ZONE
+  RESIDENCE_ZONE,
+  @HiveField(11)
+  NO_DRIVING,
+  @HiveField(12)
+  INCORRECT_PARKING
 }
 
 final offences = OffenceType.values.map((e) => e.toString()).toList();

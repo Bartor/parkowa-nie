@@ -25,14 +25,16 @@ class OffenceTypeAdapter extends TypeAdapter<OffenceType> {
         return OffenceType.PARKED_ON_GREEN_AREA;
       case 6:
         return OffenceType.TOO_CLOSE_TO_BUS_TRAM_STOP;
-      case 7:
-        return OffenceType.OBSTRUCTING_LEGALLY_PARKED_VEHICLE;
       case 8:
         return OffenceType.TOO_HEAVY;
       case 9:
         return OffenceType.AWAY_FROM_THE_EDGE_OF_THE_ROAD;
       case 10:
         return OffenceType.RESIDENCE_ZONE;
+      case 11:
+        return OffenceType.NO_DRIVING;
+      case 12:
+        return OffenceType.INCORRECT_PARKING;
       default:
         return OffenceType.NO_ENOUGH_SIDEWALK_SPACE;
     }
@@ -59,9 +61,6 @@ class OffenceTypeAdapter extends TypeAdapter<OffenceType> {
       case OffenceType.TOO_CLOSE_TO_BUS_TRAM_STOP:
         writer.writeByte(6);
         break;
-      case OffenceType.OBSTRUCTING_LEGALLY_PARKED_VEHICLE:
-        writer.writeByte(7);
-        break;
       case OffenceType.TOO_HEAVY:
         writer.writeByte(8);
         break;
@@ -70,6 +69,12 @@ class OffenceTypeAdapter extends TypeAdapter<OffenceType> {
         break;
       case OffenceType.RESIDENCE_ZONE:
         writer.writeByte(10);
+        break;
+      case OffenceType.NO_DRIVING:
+        writer.writeByte(11);
+        break;
+      case OffenceType.INCORRECT_PARKING:
+        writer.writeByte(12);
         break;
     }
   }

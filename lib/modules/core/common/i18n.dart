@@ -87,23 +87,29 @@ class I18n {
       "en": "Parking on sidewalk away from the edge of the road",
       "pl": "Postój na chodniku z dala od krawędzi jezdni"
     },
-    OffenceType.OBSTRUCTING_LEGALLY_PARKED_VEHICLE.toString(): {
-      "en": "Parked vehicle obstructs access to legally parked one",
-      "pl": "Pojazd utrudnia dostęp do legalnie zaparkowanego pojazdu"
-    },
     OffenceType.TOO_CLOSE_TO_BUS_TRAM_STOP.toString(): {
       "en": "Parking less than 15 meters from public transport stop",
-      "pl": "Postój poniżej 15 metrów od przystanku"
+      "pl":
+          "Postój poniżej 15 metrów od przystanku lub na terenie zatoce autobusowej"
     },
     OffenceType.TOO_HEAVY.toString(): {
       "en":
           "Vehilce with permissible gross weight greater than 2.5 t parked on sidewalk",
       "pl":
-          "Pojazd o dopuszczalnej masie całkowitej powyżej 2.5 t stoi na chodniku"
+          "Pojazd pojadem o dopuszczalnej masie całkowitej powyżej 2.5 t na chodniku"
     },
     OffenceType.RESIDENCE_ZONE.toString(): {
       "en": "Parking outside of designated parking place in a residence zone",
-      "pl": "Postój poza wyznaczonym miejsce w strefie zamieszakania"
+      "pl": "Postój poza wyznaczonym miejscem w strefie zamieszakania"
+    },
+    OffenceType.NO_DRIVING.toString(): {
+      "en": "Not obeying no driving sign",
+      "pl": "Nieprzestrzeganie znaku zakazu ruchu"
+    },
+    OffenceType.INCORRECT_PARKING.toString(): {
+      "en": "Not obeying the parking signs",
+      "pl":
+          "Niezastosowanie się do miejsc wyznaczonych znakami poziomymi lub pionowymi"
     }
   });
 

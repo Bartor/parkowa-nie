@@ -9,7 +9,9 @@ An app which helps you in reporting illegal parking! It allows you to take a pho
 - Poznań
 - Wrocław
 
-If you are aware of any other cities in Poland that support email reporting, please consider adding those by creating a pull request and editing file [city-email-addresses.dart](./lib/modules/core/common/show-image-preview.dart).
+If you are aware of any other cities in Poland that support email reporting, please consider adding those by creating a pull request and editing file [city-email-addresses.dart](./lib/modules/core/data/city-email-addresses.dart).
+
+This is a PoC solution and will probably be changed to json in assets + fetching it dynamically from web to check if an updated version is available.
 
 ## Requirements
 

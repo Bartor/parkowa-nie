@@ -7,11 +7,11 @@ import 'package:parkowa_nie/modules/core/common/format-date.dart';
 import 'package:parkowa_nie/modules/core/common/show-image-preview.dart';
 import 'package:parkowa_nie/modules/core/model/ContactInformation.dart';
 import 'package:parkowa_nie/modules/core/model/Report.dart';
+import 'package:parkowa_nie/modules/core/services/CitiesService.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/core/widgets/Layout.dart';
 import 'package:parkowa_nie/modules/core/widgets/ImageButton.dart';
 import 'package:parkowa_nie/modules/core/data/build-message-body.dart';
-import 'package:parkowa_nie/modules/core/data/city-email-addresses.dart';
 import 'package:parkowa_nie/modules/core/widgets/YesNoDialog.dart';
 import 'package:parkowa_nie/modules/report/pages/CreateReportPage.dart';
 import 'package:parkowa_nie/modules/settings/pages/SettingsPage.dart';
@@ -77,7 +77,8 @@ class _ReportDetailsState extends State<ReportDetails> {
       }
     }
 
-    final receipent = getCityEmail(city: _report.city);
+    final receipent = await Provider.of<CitiesService>(context, listen: false)
+        .resolveEmail(_report.city);
     if (receipent == null) {
       final doContinue = await showDialog(
           context: context,

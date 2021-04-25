@@ -9,13 +9,11 @@ An app which helps you in reporting illegal parking! It allows you to take a pho
 - Poznań
 - Wrocław
 
-If you are aware of any other cities in Poland that support email reporting, please consider adding those by creating a pull request and editing file [city-email-addresses.dart](./lib/modules/core/data/city-email-addresses.dart).
-
-This is a PoC solution and will probably be changed to json in assets + fetching it dynamically from web to check if an updated version is available.
+If you are aware of any other cities in Poland that support email reporting, please consider adding those by creating a pull request and editing file [cities.json](./assets/cities.json). This file is added to the app bundle and then loaded, as well fetched every time the app opens, so the user has the newest version of the list regardless their installed app version.
 
 ## Requirements
 
-- Flutter (stable) 2.0.4
+- Flutter (stable) 2.0.5
 
 ## Development
 

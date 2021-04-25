@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:parkowa_nie/modules/core/model/Offence.dart';
 import 'package:parkowa_nie/modules/core/pages/HomePage.dart';
 import 'package:parkowa_nie/modules/core/services/AnalyticsService.dart';
+import 'package:parkowa_nie/modules/core/services/CitiesService.dart';
 import 'package:parkowa_nie/modules/core/services/LocationService.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/core/services/ThemeService.dart';
@@ -34,7 +35,8 @@ void main() async {
         create: (_) => ThemeService(),
       ),
       Provider(create: (_) => LocationService()),
-      Provider(create: (_) => AnalyticsService())
+      Provider(create: (_) => AnalyticsService()),
+      Provider(create: (_) => CitiesService(), lazy: false),
     ],
     child: App(),
   ));

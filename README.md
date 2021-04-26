@@ -2,6 +2,10 @@
 
 An app which helps you in reporting illegal parking! It allows you to take a photo, choose offences, locate you automatically and generate a ready-to-send email in your email app!
 
+**Download it here**:
+
+- [Google Play Store](https://play.google.com/store/apps/details?id=net.bartor.parkowa_nie)
+
 ### Supported cities
 
 - Katowice

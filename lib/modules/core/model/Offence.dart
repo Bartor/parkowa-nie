@@ -25,7 +25,9 @@ enum OffenceType {
   @HiveField(11)
   NO_DRIVING,
   @HiveField(12)
-  INCORRECT_PARKING
+  INCORRECT_PARKING,
+  @HiveField(13)
+  PARKING_ON_BIKE_LANE
 }
 
 final offences = OffenceType.values.map((e) => e.toString()).toList();

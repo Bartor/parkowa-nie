@@ -110,7 +110,11 @@ class I18n {
       "en": "Not obeying the parking signs",
       "pl":
           "Niezastosowanie się do miejsc wyznaczonych znakami poziomymi lub pionowymi"
-    }
+    },
+    OffenceType.PARKING_ON_BIKE_LANE.toString(): {
+      "en": "Parking on a bike lane",
+      "pl": "Postój na pasie ruchu/drodze dla rowerowów"
+    },
   });
 
   static var translations = _uiTranslations * _offenceTranslations;

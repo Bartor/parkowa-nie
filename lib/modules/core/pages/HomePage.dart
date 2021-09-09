@@ -7,6 +7,7 @@ import 'package:parkowa_nie/modules/core/widgets/Layout.dart';
 import 'package:parkowa_nie/modules/report/pages/CreateReportPage.dart';
 import 'package:parkowa_nie/modules/report/pages/ReportDetailsPage.dart';
 import 'package:parkowa_nie/modules/settings/pages/SettingsPage.dart';
+import 'package:parkowa_nie/modules/statistics/pages/StatisticsPage.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -85,6 +86,13 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Layout(
       actions: [
+        IconButton(
+          icon: Icon(Icons.bar_chart),
+          onPressed: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => StatisitcsPage()));
+          },
+        ),
         IconButton(
             icon: Icon(Icons.settings),
             onPressed: () {

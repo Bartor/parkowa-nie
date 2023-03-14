@@ -77,9 +77,9 @@ class _ReportDetailsState extends State<ReportDetails> {
       }
     }
 
-    final receipent = await Provider.of<CitiesService>(context, listen: false)
+    final recipient = await Provider.of<CitiesService>(context, listen: false)
         .resolveEmail(_report.city);
-    if (receipent == null) {
+    if (recipient == null) {
       final doContinue = await showDialog(
           context: context,
           builder: (_) => YesNoDialog(
@@ -94,7 +94,7 @@ class _ReportDetailsState extends State<ReportDetails> {
     final MailOptions email = MailOptions(
       body: buildMessageBody(report: _report, contactInfo: contactInfo),
       subject: 'Zgłoszenie nieprawidłowego parkowania',
-      recipients: [receipent],
+      recipients: [recipient],
       attachments: _report.photoUris,
       isHTML: false,
     );
@@ -181,11 +181,11 @@ class _ReportDetailsState extends State<ReportDetails> {
                         text: _report.licensePlate ?? "No licence plate".i18n)
                   ])),
                   Divider(),
-                  _report.offences.isEmpty
+                  _report.offenses.isEmpty
                       ? Text("No offences".i18n)
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: _report.offences
+                          children: _report.offenses
                               .map((e) => Text(e.i18n))
                               .toList()),
                   Divider(),

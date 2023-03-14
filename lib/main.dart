@@ -1,11 +1,9 @@
-import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:parkowa_nie/modules/core/model/Offence.dart';
+import 'package:parkowa_nie/modules/core/model/AppData.dart';
+import 'package:parkowa_nie/modules/core/model/Offense.dart';
 import 'package:parkowa_nie/modules/core/pages/HomePage.dart';
-import 'package:parkowa_nie/modules/core/services/AnalyticsService.dart';
 import 'package:parkowa_nie/modules/core/services/CitiesService.dart';
 import 'package:parkowa_nie/modules/core/services/LocationService.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
@@ -23,7 +21,8 @@ void main() async {
 
   Hive.registerAdapter(ContactInformationAdapter());
   Hive.registerAdapter(ReportAdapter());
-  Hive.registerAdapter(OffenceTypeAdapter());
+  Hive.registerAdapter(OffenseTypeAdapter());
+  Hive.registerAdapter(AppDataAdapter());
 
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MultiProvider(
@@ -35,7 +34,6 @@ void main() async {
         create: (_) => ThemeService(),
       ),
       Provider(create: (_) => LocationService()),
-      Provider(create: (_) => AnalyticsService()),
       Provider(create: (_) => CitiesService(), lazy: false),
     ],
     child: App(),
@@ -46,17 +44,12 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeService = Provider.of<ThemeService>(context);
-    final analytics =
-        Provider.of<AnalyticsService>(context, listen: false).analytics;
 
     return MaterialApp(
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
-      ],
-      navigatorObservers: [
-        FirebaseAnalyticsObserver(analytics: analytics),
       ],
       supportedLocales: [
         const Locale('pl'),

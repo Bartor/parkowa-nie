@@ -10,9 +10,9 @@ String buildMessageBody({Report report, ContactInformation contactInfo}) {
   buffer.write(
       "Dzień dobry,\nChciałbym zgłosić nieprawidłowe parkowanie pod adresem ${report.address}, ${report.city}. Pojazd o rejestracji ${report.licensePlate} parkował tam ${formatDate(report.dateTime)}.");
 
-  if (report.offences.isNotEmpty) {
+  if (report.offenses.isNotEmpty) {
     buffer.write(" Kierujący popełnił następujące wykroczenia:\n");
-    for (var offence in report.offences) {
+    for (var offence in report.offenses) {
       buffer.write("- ${localize(offence, I18n.translations, locale: "pl")}\n");
     }
   }

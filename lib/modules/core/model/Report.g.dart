@@ -20,7 +20,7 @@ class ReportAdapter extends TypeAdapter<Report> {
       address: fields[0] as String,
       city: fields[1] as String,
       dateTime: fields[2] as DateTime,
-      offences: (fields[3] as List)?.cast<String>(),
+      offenses: (fields[3] as List)?.cast<String>(),
       licensePlate: fields[4] as String,
       photoUris: (fields[5] as List)?.cast<String>(),
       sent: fields[6] as bool,
@@ -38,7 +38,7 @@ class ReportAdapter extends TypeAdapter<Report> {
       ..writeByte(2)
       ..write(obj.dateTime)
       ..writeByte(3)
-      ..write(obj.offences)
+      ..write(obj.offenses)
       ..writeByte(4)
       ..write(obj.licensePlate)
       ..writeByte(5)

@@ -18,6 +18,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool onlyNotSent = false;
+
   Widget _listItem({Widget child, Function onTap}) => Card(
         child: InkWell(
           splashColor: Colors.white60,
@@ -82,6 +84,18 @@ class _HomePageState extends State<HomePage> {
         ),
       );
 
+  Iterable<MapEntry<dynamic, Report>> _filterReports(
+      Map<dynamic, Report> reportMap) {
+    final filteredReports = onlyNotSent
+        ? reportMap.entries.where((element) => !element.value.sent)
+        : reportMap.entries;
+    filteredReports
+        .toList()
+        .sort((a, b) => a.value.dateTime.compareTo(b.value.dateTime));
+
+    return filteredReports;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Layout(
@@ -90,7 +104,7 @@ class _HomePageState extends State<HomePage> {
           icon: Icon(Icons.bar_chart),
           onPressed: () {
             Navigator.of(context)
-                .push(MaterialPageRoute(builder: (_) => StatisitcsPage()));
+                .push(MaterialPageRoute(builder: (_) => StatisticsPage()));
           },
         ),
         IconButton(
@@ -104,6 +118,15 @@ class _HomePageState extends State<HomePage> {
         children: [
           _newReportButton(),
           Divider(),
+          SwitchListTile(
+              activeColor: Colors.indigo,
+              title: Text('Show only not yet sent?'.i18n),
+              value: onlyNotSent,
+              onChanged: (bool value) {
+                setState(() {
+                  onlyNotSent = value;
+                });
+              }),
           Expanded(
             child: Consumer<DatabaseService>(
               builder: (context, databaseService, widget) {
@@ -114,12 +137,19 @@ class _HomePageState extends State<HomePage> {
                   if (databaseService.reports.isEmpty) {
                     return Text('No historic data'.i18n);
                   } else {
-                    return ListView(
-                      physics: BouncingScrollPhysics(),
-                      children: databaseService.reports.entries
-                          .map((e) => _buildReportCard(e.value, e.key))
-                          .toList(),
-                    );
+                    final reportWidgets =
+                        _filterReports(databaseService.reports)
+                            .map((e) => _buildReportCard(e.value, e.key))
+                            .toList();
+
+                    if (reportWidgets.isEmpty) {
+                      return Text('All reports already sent!'.i18n);
+                    } else {
+                      return ListView(
+                        physics: BouncingScrollPhysics(),
+                        children: reportWidgets,
+                      );
+                    }
                   }
                 }
               },

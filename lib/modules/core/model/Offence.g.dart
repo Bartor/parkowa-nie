@@ -1,80 +1,85 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'Offence.dart';
+part of 'Offense.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class OffenceTypeAdapter extends TypeAdapter<OffenceType> {
+class OffenseTypeAdapter extends TypeAdapter<OffenseType> {
   @override
   final int typeId = 2;
 
   @override
-  OffenceType read(BinaryReader reader) {
+  OffenseType read(BinaryReader reader) {
     switch (reader.readByte()) {
       case 1:
-        return OffenceType.NO_ENOUGH_SIDEWALK_SPACE;
+        return OffenseType.NO_ENOUGH_SIDEWALK_SPACE;
       case 2:
-        return OffenceType.TOO_CLOSE_TO_CROSSING;
+        return OffenseType.TOO_CLOSE_TO_CROSSING;
       case 3:
-        return OffenceType.TOO_CLOSE_TO_INTERSECTION;
+        return OffenseType.TOO_CLOSE_TO_INTERSECTION;
       case 4:
-        return OffenceType.NO_STOPPING_SING;
+        return OffenseType.NO_STOPPING_SING;
       case 5:
-        return OffenceType.PARKED_ON_GREEN_AREA;
+        return OffenseType.PARKED_ON_GREEN_AREA;
       case 6:
-        return OffenceType.TOO_CLOSE_TO_BUS_TRAM_STOP;
+        return OffenseType.TOO_CLOSE_TO_BUS_TRAM_STOP;
       case 8:
-        return OffenceType.TOO_HEAVY;
+        return OffenseType.TOO_HEAVY;
       case 9:
-        return OffenceType.AWAY_FROM_THE_EDGE_OF_THE_ROAD;
+        return OffenseType.AWAY_FROM_THE_EDGE_OF_THE_ROAD;
       case 10:
-        return OffenceType.RESIDENCE_ZONE;
+        return OffenseType.RESIDENCE_ZONE;
       case 11:
-        return OffenceType.NO_DRIVING;
+        return OffenseType.NO_DRIVING;
       case 12:
-        return OffenceType.INCORRECT_PARKING;
+        return OffenseType.INCORRECT_PARKING;
+      case 13:
+        return OffenseType.PARKING_ON_BIKE_LANE;
       default:
-        return OffenceType.NO_ENOUGH_SIDEWALK_SPACE;
+        return OffenseType.NO_ENOUGH_SIDEWALK_SPACE;
     }
   }
 
   @override
-  void write(BinaryWriter writer, OffenceType obj) {
+  void write(BinaryWriter writer, OffenseType obj) {
     switch (obj) {
-      case OffenceType.NO_ENOUGH_SIDEWALK_SPACE:
+      case OffenseType.NO_ENOUGH_SIDEWALK_SPACE:
         writer.writeByte(1);
         break;
-      case OffenceType.TOO_CLOSE_TO_CROSSING:
+      case OffenseType.TOO_CLOSE_TO_CROSSING:
         writer.writeByte(2);
         break;
-      case OffenceType.TOO_CLOSE_TO_INTERSECTION:
+      case OffenseType.TOO_CLOSE_TO_INTERSECTION:
         writer.writeByte(3);
         break;
-      case OffenceType.NO_STOPPING_SING:
+      case OffenseType.NO_STOPPING_SING:
         writer.writeByte(4);
         break;
-      case OffenceType.PARKED_ON_GREEN_AREA:
+      case OffenseType.PARKED_ON_GREEN_AREA:
         writer.writeByte(5);
         break;
-      case OffenceType.TOO_CLOSE_TO_BUS_TRAM_STOP:
+      case OffenseType.TOO_CLOSE_TO_BUS_TRAM_STOP:
         writer.writeByte(6);
         break;
-      case OffenceType.TOO_HEAVY:
+      case OffenseType.TOO_HEAVY:
         writer.writeByte(8);
         break;
-      case OffenceType.AWAY_FROM_THE_EDGE_OF_THE_ROAD:
+      case OffenseType.AWAY_FROM_THE_EDGE_OF_THE_ROAD:
         writer.writeByte(9);
         break;
-      case OffenceType.RESIDENCE_ZONE:
+      case OffenseType.RESIDENCE_ZONE:
         writer.writeByte(10);
         break;
-      case OffenceType.NO_DRIVING:
+      case OffenseType.NO_DRIVING:
         writer.writeByte(11);
         break;
-      case OffenceType.INCORRECT_PARKING:
+      case OffenseType.INCORRECT_PARKING:
         writer.writeByte(12);
+        break;
+      case OffenseType.PARKING_ON_BIKE_LANE:
+        writer.writeByte(13);
         break;
     }
   }
@@ -85,7 +90,7 @@ class OffenceTypeAdapter extends TypeAdapter<OffenceType> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is OffenceTypeAdapter &&
+      other is OffenseTypeAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

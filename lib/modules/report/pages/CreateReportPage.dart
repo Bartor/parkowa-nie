@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:exif/exif.dart';
 import 'package:parkowa_nie/modules/core/common/format-date.dart';
 import 'package:parkowa_nie/modules/core/common/i18n.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:parkowa_nie/modules/core/common/empty-validator.dart';
 import 'package:parkowa_nie/modules/core/common/show-image-preview.dart';
-import 'package:parkowa_nie/modules/core/model/Offence.dart';
+import 'package:parkowa_nie/modules/core/model/AppData.dart';
+import 'package:parkowa_nie/modules/core/model/Offense.dart';
 import 'package:parkowa_nie/modules/core/model/Report.dart';
-import 'package:parkowa_nie/modules/core/services/AnalyticsService.dart';
 import 'package:parkowa_nie/modules/core/services/DatabaseService.dart';
 import 'package:parkowa_nie/modules/core/services/LocationService.dart';
 import 'package:parkowa_nie/modules/core/widgets/ImagePreview.dart';
@@ -32,7 +33,7 @@ class CreateReportPage extends StatefulWidget {
 class _CreateReportPageState extends State<CreateReportPage> {
   List<ReportPhoto> _photos = [];
 
-  Map<String, bool> _offences = {for (var offence in offences) offence: false};
+  Map<String, bool> _offenses = {for (var offense in offenses) offense: false};
   DateTime _dateTime = DateTime.now();
 
   bool _locating = false;
@@ -54,8 +55,8 @@ class _CreateReportPageState extends State<CreateReportPage> {
       _cityController.text = widget.report.city;
       _dateTimeController.text = formatDate(widget.report.dateTime);
 
-      for (var offence in widget.report.offences) {
-        _offences[offence] = true;
+      for (var offense in widget.report.offenses) {
+        _offenses[offense] = true;
       }
 
       _dateTime = widget.report.dateTime;
@@ -63,6 +64,13 @@ class _CreateReportPageState extends State<CreateReportPage> {
       _photos = widget.report.photoUris
           .map((e) => ReportPhoto(source: ImageSource.gallery, file: File(e)))
           .toList();
+    } else {
+      final appData =
+          Provider.of<DatabaseService>(context, listen: false).appData;
+
+      if (appData != null) {
+        _cityController.text = appData.currentCity;
+      }
     }
   }
 
@@ -85,7 +93,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                 onPressed: () async {
                   try {
                     final image =
-                        await picker.getImage(source: ImageSource.camera);
+                        await picker.pickImage(source: ImageSource.camera);
 
                     if (image == null) {
                       Navigator.of(context).pop(null);
@@ -112,7 +120,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
                 onPressed: () async {
                   try {
                     final image =
-                        await picker.getImage(source: ImageSource.gallery);
+                        await picker.pickImage(source: ImageSource.gallery);
                     if (image == null) {
                       Navigator.of(context).pop(null);
                     } else {
@@ -128,8 +136,25 @@ class _CreateReportPageState extends State<CreateReportPage> {
             ]));
 
     if (result != null) {
+      if (_photos.isEmpty) {
+        _setDateTimeFromPhoto(result.file);
+      }
+
       setState(() {
         _photos.insert(0, result);
+      });
+    }
+  }
+
+  Future<void> _setDateTimeFromPhoto(File photo) async {
+    final data = await readExifFromFile(photo);
+    if (data.containsKey('EXIF DateTimeOriginal')) {
+      DateTime dateTime = DateTime.parse(
+          data['EXIF DateTimeOriginal'].toString().replaceAll(':', ''));
+      setState(() {
+        _dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day,
+            dateTime.hour, dateTime.minute);
+        _dateTimeController.text = formatDate(_dateTime);
       });
     }
   }
@@ -182,16 +207,14 @@ class _CreateReportPageState extends State<CreateReportPage> {
           address: _streetController.text.trim(),
           city: _cityController.text.trim(),
           dateTime: DateTime.now(),
-          offences: _offences.entries
+          offenses: _offenses.entries
               .where((element) => element.value)
               .map((e) => e.key)
               .toList(),
           photoUris: _photos.map((e) => e.file.path).toList());
 
-      Provider.of<AnalyticsService>(context, listen: false)
-          .createReport(report: report)
-          .onError((error, stackTrace) => print(error));
-
+      await Provider.of<DatabaseService>(context, listen: false)
+          .updateAppData(appData: AppData(currentCity: report.city));
       if (widget.report == null) {
         // We are creating a report
         final id = await Provider.of<DatabaseService>(context, listen: false)
@@ -359,15 +382,15 @@ class _CreateReportPageState extends State<CreateReportPage> {
         ],
       ));
 
-  Widget _buildOffenceList() => ListView(
+  Widget _buildOffenseList() => ListView(
         physics: BouncingScrollPhysics(),
-        children: offences
+        children: offenses
             .map((e) => CheckboxListTile(
                   activeColor: Colors.indigo.shade200,
-                  value: _offences[e],
+                  value: _offenses[e],
                   onChanged: (value) {
                     setState(() {
-                      _offences[e] = value;
+                      _offenses[e] = value;
                     });
                   },
                   title: Text(e.i18n),
@@ -402,7 +425,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
             SizedBox(
               height: 20,
             ),
-            Expanded(child: _buildOffenceList()),
+            Expanded(child: _buildOffenseList()),
             ElevatedButton(onPressed: _saveReport, child: Text('Save'.i18n))
           ],
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 import 'package:parkowa_nie/modules/core/model/ContactInformation.dart';
+import 'package:parkowa_nie/modules/core/model/AppData.dart';
 import 'package:parkowa_nie/modules/core/model/Report.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -10,6 +11,7 @@ class DatabaseService extends ChangeNotifier {
   bool _initialized = false;
 
   ContactInformation contact;
+  AppData appData;
   Map<dynamic, Report> reports = {};
 
   DatabaseService() {
@@ -24,6 +26,7 @@ class DatabaseService extends ChangeNotifier {
 
       _userBox.listenable().addListener(() async {
         contact = await _userBox.get('contact_information');
+        appData = await _userBox.get('app_data');
         notifyListeners();
       });
 
@@ -33,6 +36,7 @@ class DatabaseService extends ChangeNotifier {
       });
 
       contact = await _userBox.get('contact_information');
+      appData = await _userBox.get('app_data');
       reports = _reportsBox.toMap();
       notifyListeners();
     }
@@ -57,5 +61,10 @@ class DatabaseService extends ChangeNotifier {
       {ContactInformation information}) async {
     await _init();
     await _userBox.put('contact_information', information);
+  }
+
+  Future<void> updateAppData({AppData appData}) async {
+    await _init();
+    await _userBox.put('app_data', appData);
   }
 }

@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 part 'Offence.g.dart';
 
 @HiveType(typeId: 2)
-enum OffenceType {
+enum OffenseType {
   @HiveField(1)
   NO_ENOUGH_SIDEWALK_SPACE,
   @HiveField(2)
@@ -25,7 +25,9 @@ enum OffenceType {
   @HiveField(11)
   NO_DRIVING,
   @HiveField(12)
-  INCORRECT_PARKING
+  INCORRECT_PARKING,
+  @HiveField(13)
+  PARKING_ON_BIKE_LANE
 }
 
-final offences = OffenceType.values.map((e) => e.toString()).toList();
+final offenses = OffenseType.values.map((e) => e.toString()).toList();

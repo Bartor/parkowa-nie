@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:parkowa_nie/modules/core/model/AppData.dart';
 import 'package:parkowa_nie/modules/core/model/Offense.dart';
